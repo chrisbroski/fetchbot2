@@ -1,4 +1,4 @@
-# ![Fetchbot2](brain/favicon.png) Fetchbot II
+# ![Fetchbot II](brain/viewer/favicon.png) Fetchbot II
 
 Fetchbot is a robotics project with the end goal of creating a roving bot that can chase, pick up, and return a ball.
 
