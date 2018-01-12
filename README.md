@@ -10,7 +10,7 @@ The second version has the intermediate goal of chasing a laser pointer dot.
 
 ### Hardware
 
-* Actobotics Junior Runt Rover (chassis, wheels, motor) https://www.servocity.com/junior $29.99
+* Actobotics Whippersnapper Runt Rover Kit (chassis, wheels, motor) https://www.servocity.com/whippersnapper $29.99
 * Raspberry Pi Zero W $10.00 ($5.00 on sale)
 * H-bridge $12.99
 * [Inland 2,600mAh Power Bank Battery Charger for Mobile Devices](http://www.microcenter.com/product/447265/2,600mAh_Power_Bank_Battery_Charger_for_Mobile_Devices) for remote power to the Raspberry Pi. $5.00
