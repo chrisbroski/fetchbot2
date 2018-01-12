@@ -1,0 +1,5 @@
+[
+    {"situation": {}, "response": ["search"]},
+    {"situation": {"lowlight": true}, "response": ["perform", "move", {"type": "stop"}]},
+    {"situation": {"reddot": true}, "response": ["chase"]}
+]

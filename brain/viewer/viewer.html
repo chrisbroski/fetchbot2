@@ -1,0 +1,81 @@
+<!doctype>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Fetchbot Brain Viewer</title>
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+<meta name="google" content="notranslate">
+<link rel="icon" type="image/png"  href="img/favicon.png">
+<link rel="stylesheet" type="text/css"  href="viewer.css">
+
+<body>
+<article>
+
+<div id="hud" class="column">
+<div id="ruler-x">
+    <span id="x-rule-0">0</span
+    ><span id="x-rule-1"></span
+    ><span id="x-rule-2"></span
+    ><span id="x-rule-3"></span
+    ><span id="x-rule-4"></span>
+</div>
+<div id="ruler-y">
+    <span id="y-rule-0">0</span>
+    <span id="y-rule-1"></span>
+    <span id="y-rule-2"></span>
+    <span id="y-rule-3"></span>
+    <span id="y-rule-4"></span>
+</div>
+<div id="vizualize"></div>
+
+<div style="clear: both; ">
+    <label><input type="checkbox" id="layer-edges" checked="checked"> edges</label>
+    <label><input type="checkbox" id="layer-brightRed" checked="checked"> brightRed</label>
+</div>
+
+<h3>Sense State</h3>
+<pre id="senseState"></pre>
+</div>
+
+<div id="behaviors" class="column">
+<button id="saveBehavior">Save</button>
+<button id="newBehavior">+</button>
+<h3>Behavior</h3>
+<select id="behaviorTable" multiple="multiple"></select>
+
+<h3>Sense Params</h3>
+<div id="senseParams"></div>
+
+</div>
+
+<div id="action" class="column">
+
+<div id="manual">
+    <button onclick="manual()">Request manual control</button>
+</div>
+<div><h3>Action</h3></div>
+<pre id="display-action-type">manual, maneuver, or perform</pre>
+<pre id="current-action"></pre>
+
+<div id="actions"></div>
+
+<h3>Action Params</h3>
+<div id="actionParams"></div>
+
+</div>
+
+</article>
+
+<dialog id="behaviorEdit">
+<div>
+<h3>Detectors</h3>
+</div>
+<div id="behaviorActions">
+<h3>Actions</h3>
+</div>
+<button id="closeBehaviorEdit">Close</button>
+<button id="saveBehaviorEdit">Save</button>
+</dialog>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="viewer.js"></script>
