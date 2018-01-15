@@ -249,6 +249,8 @@ function isActParamsValues(params) {
 
 function manualAction() {
     var actGroup = this.parentElement,
+        actSection = actGroup.parentElement,
+        actLib = actSection.getAttribute("data-action"),
         actType = actGroup.getAttribute("data-action-type"),
         paramInputs = actGroup.getElementsByTagName("input"),
         paramSelects = actGroup.getElementsByTagName("select"),
@@ -266,7 +268,7 @@ function manualAction() {
         actName = this.getAttribute("data-action");
     }
 
-    socket.emit("action", JSON.stringify([actType, actName, paramData]));
+    socket.emit("action", JSON.stringify([actLib, actType, actName, paramData]));
 }
 
 function actionParamFragment(act, params) {
