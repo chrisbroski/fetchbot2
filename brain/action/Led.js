@@ -32,11 +32,12 @@ function Led(senses, virtual) {
         if (!params) {
             return lightParams;
         }
+        console.log(params);
 
         colors = color[params.type];
         red.digitalWrite(colors[0]);
-        green.digitalWrite(colors[0]);
-        blue.digitalWrite(colors[0]);
+        green.digitalWrite(colors[1]);
+        blue.digitalWrite(colors[2]);
     }
     this.perform.light = light;
 
