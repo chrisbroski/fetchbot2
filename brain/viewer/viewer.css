@@ -205,3 +205,12 @@ dialog pre {
 #actions pre {
     margin: 0;
 }
+div.data-detector {
+    font-size: 12px;
+}
+#behaviorDetectors > div {
+    padding: 2px 0;
+}
+#behaviorActions > div {
+    padding-bottom: 10px;
+}

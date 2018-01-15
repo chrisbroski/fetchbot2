@@ -8,7 +8,9 @@ function Actions(senses, virtual) {
         dcwheels = new DcWheels(senses, virtual),
         Mood = require('./action/Mood.js'),
         mood = new Mood(senses),
-        actions = {"dc_wheels": {}, "mood": {}};
+        Led = require('./action/Led.js'),
+        led = new Led(senses, virtual),
+        actions = {"dc_wheels": {}, "mood": {}, "led": {}};
 
     // Set up performers and maneuvers from libraries
     actions.dc_wheels.perform = {};
@@ -20,6 +22,10 @@ function Actions(senses, virtual) {
     actions.mood.perform = {};
     actions.mood.maneuver = {};
     actions.mood.perform.setMood = mood.perform.setMood;
+
+    actions.led.perform = {};
+    actions.led.maneuver = {};
+    actions.led.perform.light = led.perform.light;
 
     this.dispatch = function actionDispatch(action, actType, act, params) {
         params = params || {};
@@ -58,7 +64,7 @@ function Actions(senses, virtual) {
         }
         newAction = JSON.stringify([actType, act, params]);
         if (currentAction !== newAction) { // if not current action
-            senses.currentAction(action , actType, act, params);
+            senses.currentAction(action, actType, act, params);
             console.log(action, actType, act, params);
         }
 

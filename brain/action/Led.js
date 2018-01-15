@@ -3,36 +3,52 @@
 function Led(senses, virtual) {
     "use strict";
 
-    var Gpio, red, green, blue;
+    var Gpio, red, green, blue, color = {}, lightParams;
 
     this.perform = {};
     this.maneuver = {};
 
-    this.perform.red = function () {
-        red.digitalWrite(1);
-        green.digitalWrite(0);
-        blue.digitalWrite(0);
-    };
+    color.off = [0, 0, 0];
+    color.red = [1, 0, 0];
+    color.green = [0, 1, 0];
+    color.blue = [0, 0, 1];
 
-    this.perform.green = function () {
-        red.digitalWrite(0);
-        green.digitalWrite(1);
-        blue.digitalWrite(0);
-    };
+    lightParams = [
+        {
+            description: "type",
+            values: [
+                "off",
+                "red",
+                "green",
+                "blue"
+            ],
+            auto: "off"
+        }
+    ];
 
-    this.perform.blue = function () {
-        red.digitalWrite(0);
-        green.digitalWrite(0);
-        blue.digitalWrite(1);
-    };
+    function light(params) {
+        var colors;
+
+        if (!params) {
+            return lightParams;
+        }
+
+        colors = color[params.type];
+        red.digitalWrite(colors[0]);
+        green.digitalWrite(colors[0]);
+        blue.digitalWrite(colors[0]);
+    }
+    this.perform.light = light;
 
     function init() {
         if (!virtual) {
             Gpio = require('pigpio').Gpio;
-            red = new Gpio(19, {mode: Gpio.OUTPUT});
-            green = new Gpio(29, {mode: Gpio.OUTPUT});
+            red = new Gpio(26, {mode: Gpio.OUTPUT});
+            green = new Gpio(12, {mode: Gpio.OUTPUT});
             blue = new Gpio(16, {mode: Gpio.OUTPUT});
+            light("off");
         }
+        senses.currentAction("led", "perform", "light", {"type": "off"});
     }
 
     init();

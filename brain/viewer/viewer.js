@@ -41,22 +41,10 @@ function setControl(autoOrManual) {
 }
 
 function describeAction(action) {
-    /*var ca = action.dc_wheels,
-        actionType = document.getElementById("display-action-type"),
-        actionDetail = document.getElementById("current-action");*/
-
     Object.keys(action).forEach(function (a) {
         var caPre = document.querySelector('#actions fieldset[data-action="' + a + '"] pre');
         caPre.textContent = action[a][0] + "\n" + action[a][1] + ": " + JSON.stringify(action[a][2]);
     });
-
-    /*if (ca[0] === "maneuver") {
-        actionType.textContent = ca[0] + ": " + ca[1];
-        actionDetail.textContent = ca[2][0] + ": " + JSON.stringify(ca[2][1]);
-    } else {
-        actionType.textContent = ca[0];
-        actionDetail.textContent = ca[1] + " " + JSON.stringify(ca[2]);
-    }*/
 }
 
 function paintRaw(v, dots) {
@@ -111,6 +99,7 @@ function displayDetectors(ds) {
     Object.keys(ds).forEach(function (d) {
         detectorRow = document.createElement("div");
         detectorRow.setAttribute("data-detector", d);
+        detectorRow.className = "data-detector";
 
         detectorRow.appendChild(createRadio(d, ""));
         detectorRow.appendChild(createRadio(d, "1"));
@@ -349,7 +338,7 @@ function displayActionSelect(action) {
         actionOptionGroup,
         actionParam = document.createElement("div");
 
-    actionArea.id = "act-" + action;
+    actionArea.setAttribute("data-action", action);
     areaTitle.textContent = action;
     actionArea.appendChild(areaTitle);
 
@@ -415,10 +404,8 @@ function displayActions(actions) {
     actionData = JSON.parse(actions);
     Object.keys(actionData).forEach(function (a) {
         displayAction(a);
+        displayActionSelect(a);
     });
-
-    displayActionSelect("dc_wheels");
-    // displayActionParams("dc_wheels");
 }
 
 function populateBehavior(data) {

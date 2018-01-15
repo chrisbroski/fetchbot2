@@ -131,6 +131,7 @@ function DcWheels(senses, virtual) {
             leftEnable.digitalWrite(1);
             motor([0, 0, 0, 0]);
         }
+        senses.currentAction("dc_wheels", "perform", "move", {"type": "stop"});
     }
 
     init();
