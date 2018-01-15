@@ -636,7 +636,9 @@ function createBehaviorData() {
 
 function init() {
     disableControlButtons(true);
-    document.getElementById("newBehavior").onclick = function () {
+
+    // Wait to implement live behavior editing until later
+    /*document.getElementById("newBehavior").onclick = function () {
         clearDetectors();
         editingBehavior = -1;
         // Implement own dialog
@@ -647,7 +649,7 @@ function init() {
     };
     document.getElementById("saveBehavior").onclick = function () {
         socket.emit('btable', getBehaviorTable());
-    };
+    };*/
     document.getElementById("saveBehaviorEdit").onclick = function () {
         var bTable = document.getElementById("behaviorTable"),
             option = document.createElement("option");
