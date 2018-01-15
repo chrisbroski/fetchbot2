@@ -47,7 +47,7 @@ function Behaviors(senses, actions, config) {
             response.push({});
         }
 
-        actions.dispatch(response[0], response[1], response[2]);
+        actions.dispatch(response[0], response[1], response[2], response[3]);
     }
 
     this.updateBTable = function updateBTable(newBTable) {
