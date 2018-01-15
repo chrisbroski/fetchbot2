@@ -32,7 +32,6 @@ function Led(senses, virtual) {
         if (!params) {
             return lightParams;
         }
-        console.log(params);
 
         colors = color[params.type];
         red.digitalWrite(colors[0]);
@@ -47,7 +46,7 @@ function Led(senses, virtual) {
             red = new Gpio(26, {mode: Gpio.OUTPUT});
             green = new Gpio(12, {mode: Gpio.OUTPUT});
             blue = new Gpio(16, {mode: Gpio.OUTPUT});
-            light("off");
+            light({"type": "off"});
         }
         senses.currentAction("led", "perform", "light", {"type": "off"});
     }
