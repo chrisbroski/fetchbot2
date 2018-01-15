@@ -5,6 +5,7 @@ h1, h3 {margin: 0.5em 0; font-weight: normal; }
 h3:first-child {margin-top: 0; }
 h3 {font-size: 14px; text-transform: uppercase; }
 h4 {margin: 0; font-weight: normal; font-size: 14px; }
+h5 {margin: 0; }
 h1 img {margin: 0 10px 0 0; vertical-align: middle; }
 
 fieldset {
@@ -192,9 +193,15 @@ dialog pre {
     margin: 0 4px 0 0;
 }
 #actions fieldset {
-    padding-right: 0;
+    padding: 0 0 0 10px;
 }
 #actions fieldset button {
     margin: 0 10px 10px 0;
     min-width: 97px;
+}
+#actions h4 {
+    margin: 5px 0;
+}
+#actions pre {
+    margin: 0;
 }

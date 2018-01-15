@@ -8,6 +8,8 @@ function Senses(visionWidth, visionHeight, virtual) {
         fs = require("fs"),
         Fetchbot = require('./sense/Fetchbot.js'),
         fetchbot = new Fetchbot(),
+        Time = require('./sense/Time.js'),
+        time = new Time(),
 
         // Declare private objects
         raw = {},
@@ -28,11 +30,7 @@ function Senses(visionWidth, visionHeight, virtual) {
     // *Sense state* is a collection of all current sensory data.
 
     // *current action* indicates what the creature is doing
-    state.currentAction = ["", "", {}];
-
-    // *mood* is a peristent indicator of a creature's short-term goal
-    // They are set with a duration and will automatically remove themselves after time expires
-    /*state.mood = [];*/
+    state.currentAction = {};// ["", "", {}];
 
     // Detectors are booleans used to initiate behaviors
     state.detectors = {};
@@ -41,7 +39,7 @@ function Senses(visionWidth, visionHeight, virtual) {
     // They can only be written by perceivers, but can be read by anything
     state.perceptions = {
         dimensions: [visionWidth, visionHeight],
-        brightnessOverall: 0.0,
+        // brightnessOverall: 0.0,
         targetDirection: [0, 0, 0],
         brightRed: [],
         edges: []
@@ -50,6 +48,7 @@ function Senses(visionWidth, visionHeight, virtual) {
     // Sense state is publically readable (but not changeable).
     this.senseState = function (type) {
         if (type) {
+            // Whoa whoa - shouldn't I be passing `currentAction` into this from Actions?
             if (type === 'mood' || type === 'currentAction') {
                 return JSON.parse(JSON.stringify(state[type]));
             }
@@ -86,8 +85,8 @@ function Senses(visionWidth, visionHeight, virtual) {
     };
 
     // *current action* can be modified by the Actions module
-    this.currentAction = function currentAction(type, name, params) {
-        state.currentAction = [type, name, params];
+    this.currentAction = function currentAction(action, type, name, params) {
+        state.currentAction[action] = [type, name, params];
     };
 
     /*moods = {
@@ -143,11 +142,11 @@ function Senses(visionWidth, visionHeight, virtual) {
         state.detectors.reddot = !!state.perceptions.targetDirection.some(function (dir) {
             return (dir > 0);
         });
-        state.detectors.lowLight = (state.perceptions.brightnessOverall < 0.1);
+        // state.detectors.lowLight = (state.perceptions.brightnessOverall < 0.1);
     }
 
     function perceive() {
-        state.perceptions.brightnessOverall = raw.brightness / imgPixelSize / 256;
+        // state.perceptions.brightnessOverall = raw.brightness / imgPixelSize / 256;
         perceivers.frogEye(imgPixelSize);
         detectors();
     }
@@ -257,6 +256,13 @@ function Senses(visionWidth, visionHeight, virtual) {
             });
         }
     };
+
+    attention.time = function () {
+        // Wait, should detectors be with their sense?
+        state.detectors.longTimeSinceRed = (global.params.senses.since.red < time.sinceRed());
+        setTimeout(attention.time, 5000);
+    };
+    attention.time();
 
     function init() {
         console.log('Initialize senses module');

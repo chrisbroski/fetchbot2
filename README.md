@@ -2,7 +2,7 @@
 
 Fetchbot is a robotics project with the end goal of creating a roving bot that can chase, pick up, and return a ball.
 
-![Fetchbot II](fetchbot-2.jpeg)
+![Fetchbot II](fetchbot2b.jpeg)
 
 ## Fetchbot 2
 

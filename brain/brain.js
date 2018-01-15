@@ -84,7 +84,7 @@ io.on('connection', function (socket) {
 
     socket.on("action", function (actionData) {
         var actionArray = JSON.parse(actionData);
-        actions.dispatch("manual", actionArray[1], actionArray[2]);
+        actions.dispatch("dc_wheels", "manual", actionArray[1], actionArray[2]);
     });
 
     socket.on('control', function (controlType) {
@@ -125,7 +125,7 @@ function exitHandler(options, err) {
         console.log(err.stack);
     }
 
-    actions.dispatch("perform", "move", {"type": "stop", "speed": 1.0});
+    actions.dispatch("dc_wheels", "perform", "move", {"type": "stop", "speed": 1.0});
 
     if (options.exit) {
         process.exit();

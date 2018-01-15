@@ -30,10 +30,10 @@ function setControl(autoOrManual) {
     if (control === "manual") {
         document.querySelector('#manual button').innerHTML = "Relinquish control";
         disableControlButtons(false);
-        document.getElementById("display-action-type").textContent = "manual";
+        // document.getElementById("display-action-type").textContent = "manual";
     } else {
         document.querySelector("#manual button").innerHTML = "Request manual control";
-        document.getElementById("display-action-type").textContent = "";
+        // document.getElementById("display-action-type").textContent = "";
         disableControlButtons(true);
     }
 
@@ -41,16 +41,22 @@ function setControl(autoOrManual) {
 }
 
 function describeAction(action) {
-    var actionType = document.getElementById("display-action-type"),
-        actionDetail = document.getElementById("current-action");
+    /*var ca = action.dc_wheels,
+        actionType = document.getElementById("display-action-type"),
+        actionDetail = document.getElementById("current-action");*/
 
-    if (action[0] === "maneuver") {
-        actionType.textContent = action[0] + ": " + action[1];
-        actionDetail.textContent = action[2][0] + ": " + JSON.stringify(action[2][1]);
+    Object.keys(action).forEach(function (a) {
+        var caPre = document.querySelector('#actions fieldset[data-action="' + a + '"] pre');
+        caPre.textContent = action[a][0] + "\n" + action[a][1] + ": " + JSON.stringify(action[a][2]);
+    });
+
+    /*if (ca[0] === "maneuver") {
+        actionType.textContent = ca[0] + ": " + ca[1];
+        actionDetail.textContent = ca[2][0] + ": " + JSON.stringify(ca[2][1]);
     } else {
-        actionType.textContent = action[0];
-        actionDetail.textContent = action[1] + " " + JSON.stringify(action[2]);
-    }
+        actionType.textContent = ca[0];
+        actionDetail.textContent = ca[1] + " " + JSON.stringify(ca[2]);
+    }*/
 }
 
 function paintRaw(v, dots) {
@@ -80,7 +86,7 @@ function clearDetectors() {
     Array.from(detectorRadios).forEach(function (cb) {
         cb.checked = !cb.value;
     });
-    document.getElementById("action-type").selectedIndex = 0;
+    document.querySelector(".action-type").selectedIndex = 0;
 }
 
 function createRadio(name, val) {
@@ -92,7 +98,7 @@ function createRadio(name, val) {
     detectorInput.value = val;
     detectorInput.checked = true;
     detectorLabel.appendChild(detectorInput);
-    detectorLabel.appendChild(document.createTextNode(val || "-"));
+    detectorLabel.appendChild(document.createTextNode(val || "N/A"));
 
     return detectorLabel;
 }
@@ -159,6 +165,7 @@ function senseStateReceived(senseState) {
     }
 
     currentAction = jsonState.currentAction;
+    // I could check to see if this changed before doing useless DOM manipulation
     describeAction(currentAction);
     delete jsonState.currentAction;
     jsonString = JSON.stringify(jsonState, null, '    ');
@@ -184,10 +191,10 @@ function isSelectedParam(paramDesc, selectedParams) {
 }
 
 function displayActionParams(selectedParams) {
-    var actionType = document.getElementById("action-type").value,
+    var actionType = document.querySelector(".action-type").value,
         actionParam = document.getElementById("action-param"),
         actionInfo = actionType.split("-"),
-        paramData = actionData[actionInfo.shift()][actionInfo.join("-")],
+        paramData = actionData.dc_wheels[actionInfo.shift()][actionInfo.join("-")],
         paramLabel,
         paramInput,
         paramOption;
@@ -334,32 +341,24 @@ function actionParamFragment(act, params) {
     return actFragment;
 }
 
-function displayActions(actions) {
-    var actionSelect = document.createElement("select"),
+function displayActionSelect(action) {
+    var actionArea = document.createElement("div"),
+        areaTitle = document.createElement("h5"),
+        actionSelect = document.createElement("select"),
         actionOption,
         actionOptionGroup,
-        actionSection = document.getElementById("actions"),
-        actionDiv,
-        actionH,
-        actionParam = document.createElement("div"),
-        tmpPre = document.createElement("pre");
+        actionParam = document.createElement("div");
 
-    actionData = JSON.parse(actions);
-    actionSelect.id = "action-type";
+    actionArea.id = "act-" + action;
+    areaTitle.textContent = action;
+    actionArea.appendChild(areaTitle);
+
+    actionSelect.className = "action-type";
     actionSelect.onchange = displayActionParams;
 
     actionOptionGroup = document.createElement("optgroup");
     actionOptionGroup.label = "perform";
-    Object.keys(actionData.perform).forEach(function (act) {
-        // Actions section
-        actionDiv = document.createElement("fieldset");
-        actionDiv.setAttribute("data-action-type", "perform");
-        actionH = document.createElement("h4");
-        actionH.textContent = act;
-        actionDiv.appendChild(actionH);
-        actionDiv.appendChild(actionParamFragment(act, actionData.perform[act]));
-        actionSection.appendChild(actionDiv);
-
+    Object.keys(actionData[action].perform).forEach(function (act) {
         // Behavior popup
         actionOption = document.createElement("option");
         actionOption.textContent = act;
@@ -370,7 +369,7 @@ function displayActions(actions) {
 
     actionOptionGroup = document.createElement("optgroup");
     actionOptionGroup.label = "maneuver";
-    Object.keys(actionData.maneuver).forEach(function (act) {
+    Object.keys(actionData[action].maneuver).forEach(function (act) {
         actionOption = document.createElement("option");
         actionOption.textContent = act;
         actionOption.value = "maneuver-" + act;
@@ -378,21 +377,65 @@ function displayActions(actions) {
     });
     actionSelect.appendChild(actionOptionGroup);
 
-    document.querySelector("#behaviorActions").appendChild(actionSelect);
+    actionArea.appendChild(actionSelect);
     actionParam.id = "action-param";
-    document.querySelector("#behaviorActions").appendChild(actionParam);
+    actionArea.appendChild(actionParam);
+    document.querySelector("#behaviorActions").appendChild(actionArea);
+}
 
-    tmpPre.textContent = JSON.stringify(actionData, null, "    ");
-    document.querySelector("#behaviorActions").appendChild(tmpPre);
+function displayAction(action) {
+    var actionSection = document.getElementById("actions"),
+        actionArea = document.createElement("fieldset"),
+        areaLegend = document.createElement("legend"),
+        areaActionType = document.createElement("pre"),
+        actionDiv,
+        actionH;
 
-    displayActionParams();
+    actionArea.setAttribute("data-action", action);
+    areaLegend.textContent = action;
+    actionArea.appendChild(areaLegend);
+    areaActionType.textContent = "perform";
+    actionArea.appendChild(areaActionType);
+
+    Object.keys(actionData[action].perform).forEach(function (act) {
+        // Actions section
+        actionDiv = document.createElement("div");
+        actionDiv.setAttribute("data-action-type", "perform");
+        actionH = document.createElement("h4");
+        actionH.textContent = act;
+        actionDiv.appendChild(actionH);
+        actionDiv.appendChild(actionParamFragment(act, actionData[action].perform[act]));
+        actionArea.appendChild(actionDiv);
+    });
+
+    actionSection.appendChild(actionArea);
+}
+
+function displayActions(actions) {
+    actionData = JSON.parse(actions);
+    Object.keys(actionData).forEach(function (a) {
+        displayAction(a);
+    });
+
+    displayActionSelect("dc_wheels");
+    // displayActionParams("dc_wheels");
 }
 
 function populateBehavior(data) {
     clearDetectors();
 
     var detector = data.slice(0, data.indexOf(" ")),
-        response = JSON.parse(data.slice(data.indexOf(" ")));
+        response = data.slice(data.indexOf(": ") + 2),
+        action = data.slice(data.indexOf("→ ") + 2, data.indexOf(": ")),
+        actionOption;
+
+    if (action === "maneuver") {
+        actionOption = "maneuver-" + response;
+        response = "";
+    } else {
+        response = JSON.parse(response);
+        actionOption = "perform-" + action;
+    }
 
     if (detector !== "default:") {
         document.querySelector('#behaviorEdit div[data-detector="' + detector + '"] input[value="1"]').checked = true;
@@ -403,8 +446,12 @@ function populateBehavior(data) {
     }
 
     // Actions
-    document.querySelector("#action-type").value = response[0] + '-' + response[1];
-    displayActionParams(response[2]);
+    document.querySelector(".action-type").value = actionOption;
+    if (response) {
+        displayActionParams(response);
+    } else {
+        document.getElementById("action-param").innerHTML = "";
+    }
 
     document.getElementById("behaviorEdit").showModal();
 }
@@ -430,10 +477,10 @@ function behaviorDisplay(behavior) {
         }
     }
 
-    if (behavior.response[0] === "perform") {
-        return sit + "→ " + behavior.response[1] + ": " + JSON.stringify(behavior.response[2]);
+    if (behavior.response[1] === "perform") {
+        return sit + "→ " + behavior.response[2] + ": " + JSON.stringify(behavior.response[3]);
     }
-    return sit + "→ maneuver: " + behavior.response[0];
+    return sit + "→ maneuver: " + behavior.response[1];
 }
 
 function editBehavior() {
@@ -566,7 +613,7 @@ function createBehaviorData() {
     // go through dialog and build the behavior
     var situations = document.querySelectorAll("#behaviorEdit > div:first-child > div"),
         situation = {},
-        actionSelect = document.getElementById("action-type"),
+        actionSelect = document.querySelector(".action-type"),
         actionParams,
         actionParam = {},
         response = [];

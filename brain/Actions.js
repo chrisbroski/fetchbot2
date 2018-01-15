@@ -6,79 +6,65 @@ function Actions(senses, virtual) {
     // Action performers
     var DcWheels = require('./action/DcWheels.js'),
         dcwheels = new DcWheels(senses, virtual),
-        perform = {},
-        maneuver = {};
-
-    perform.mood = function mood(params) {
-        if (!params) {
-            return [
-                {
-                    description: 'type',
-                    options: [
-                        'searching',
-                        'relaxing',
-                        'chasing'
-                    ],
-                    auto: 'searching'
-                },
-                {
-                    description: 'duration',
-                    val: [
-                        0,
-                        86400
-                    ],
-                    auto: 60
-                }
-            ];
-        }
-        senses.mood(params.type);
-    };
+        Mood = require('./action/Mood.js'),
+        mood = new Mood(senses),
+        actions = {"dc_wheels": {}, "mood": {}};
 
     // Set up performers and maneuvers from libraries
-    perform.move = dcwheels.perform.move;
-    maneuver.chase = dcwheels.maneuver.chase;
-    maneuver.search = dcwheels.maneuver.search;
+    actions.dc_wheels.perform = {};
+    actions.dc_wheels.perform.move = dcwheels.perform.move;
+    actions.dc_wheels.maneuver = {};
+    actions.dc_wheels.maneuver.chase = dcwheels.maneuver.chase;
+    actions.dc_wheels.maneuver.search = dcwheels.maneuver.search;
 
-    this.dispatch = function actionDispatch(actType, act, params) {
+    actions.mood.perform = {};
+    actions.mood.maneuver = {};
+    actions.mood.perform.setMood = mood.perform.setMood;
+
+    this.dispatch = function actionDispatch(action, actType, act, params) {
         params = params || {};
 
-        var actions = {},
+        var actionDocs = {},
             currentAction,
             newAction,
             maneuverPerform;
 
         // if no action is given, return a list of available types and parameters
-        if (!actType) {
-            actions.perform = {};
-            actions.maneuver = {};
-            Object.keys(perform).forEach(function (a) {
-                actions.perform[a] = perform[a]();
+        if (!action) {
+            Object.keys(actions).forEach(function (a) {
+                actionDocs[a] = {};
+                actionDocs[a].perform = {};
+                actionDocs[a].maneuver = {};
+
+                Object.keys(actions[a].perform).forEach(function (p) {
+                    actionDocs[a].perform[p] = actions[a].perform[p]();
+                });
+
+                Object.keys(actions[a].maneuver).forEach(function (m) {
+                    actionDocs[a].maneuver[m] = m;
+                });
             });
 
-            Object.keys(maneuver).forEach(function (a) {
-                actions.maneuver[a] = a;
-            });
-
-            return JSON.parse(JSON.stringify(actions));
+            return JSON.parse(JSON.stringify(actionDocs));
         }
 
         // log only if action is different
         // Should we only execute if different too?
-        currentAction = JSON.stringify(senses.senseState().currentAction);
-        if (actType !== "perform" && actType !== "manual") {
-            maneuverPerform = maneuver[actType]();
+        currentAction = JSON.stringify(senses.senseState("currentAction")[action]);
+        if (actType !== "perform" && actType !== "manual") { // is a maneuver
+            maneuverPerform = actions[action].maneuver[actType]();
             act = maneuverPerform[0];
             params = maneuverPerform[1];
         }
         newAction = JSON.stringify([actType, act, params]);
         if (currentAction !== newAction) { // if not current action
-            senses.currentAction(actType, act, params);
-            console.log(actType, act, params);
+            senses.currentAction(action , actType, act, params);
+            console.log(action, actType, act, params);
         }
 
         // Execute action
         if (!virtual) {
-            perform[act](params);
+            actions[action].perform[act](params);
         }
     };
 }

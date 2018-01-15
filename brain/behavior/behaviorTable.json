@@ -1,5 +1,4 @@
 [
-    {"situation": {}, "response": ["search"]},
-    {"situation": {"lowlight": true}, "response": ["perform", "move", {"type": "stop"}]},
-    {"situation": {"reddot": true}, "response": ["chase"]}
+    {"situation": {"longTimeSinceRed": true}, "response": ["dc_wheels", "perform", "move", {"type": "stop"}]},
+    {"situation": {"reddot": true}, "response": ["dc_wheels", "chase"]}
 ]
