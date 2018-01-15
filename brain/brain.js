@@ -84,7 +84,7 @@ io.on('connection', function (socket) {
 
     socket.on("action", function (actionData) {
         var actionArray = JSON.parse(actionData);
-        actions.dispatch("dc_wheels", "manual", actionArray[1], actionArray[2]);
+        actions.dispatch(actionArray[0], actionArray[1], actionArray[2], actionArray[3]);
     });
 
     socket.on('control', function (controlType) {

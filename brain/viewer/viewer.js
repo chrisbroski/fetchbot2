@@ -249,6 +249,8 @@ function isActParamsValues(params) {
 
 function manualAction() {
     var actGroup = this.parentElement,
+        actSection = actGroup.parentElement,
+        actLib = actSection.getAttribute("data-action"),
         actType = actGroup.getAttribute("data-action-type"),
         paramInputs = actGroup.getElementsByTagName("input"),
         paramSelects = actGroup.getElementsByTagName("select"),
@@ -266,7 +268,7 @@ function manualAction() {
         actName = this.getAttribute("data-action");
     }
 
-    socket.emit("action", JSON.stringify([actType, actName, paramData]));
+    socket.emit("action", JSON.stringify([actLib, actType, actName, paramData]));
 }
 
 function actionParamFragment(act, params) {
@@ -634,7 +636,9 @@ function createBehaviorData() {
 
 function init() {
     disableControlButtons(true);
-    document.getElementById("newBehavior").onclick = function () {
+
+    // Wait to implement live behavior editing until later
+    /*document.getElementById("newBehavior").onclick = function () {
         clearDetectors();
         editingBehavior = -1;
         // Implement own dialog
@@ -645,7 +649,7 @@ function init() {
     };
     document.getElementById("saveBehavior").onclick = function () {
         socket.emit('btable', getBehaviorTable());
-    };
+    };*/
     document.getElementById("saveBehaviorEdit").onclick = function () {
         var bTable = document.getElementById("behaviorTable"),
             option = document.createElement("option");
