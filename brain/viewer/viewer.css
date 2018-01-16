@@ -214,3 +214,7 @@ div.data-detector {
 #behaviorActions > div {
     padding-bottom: 10px;
 }
+#mood-select {
+    margin-top: 5px;
+    float: right;
+}

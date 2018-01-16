@@ -40,7 +40,7 @@ function Mood(senses) {
 
     function init() {
         // if none, set to default
-        senses.currentAction("mood", "perform", "searching", {"duration": 300});
+        senses.currentAction("mood", "perform", "chasing", {"duration": 300}); // change to searching
     }
 
     init();
