@@ -1,7 +1,7 @@
 /*jslint browser: true, sloppy: true */
 /*global io */
 
-var socket, control = 'auto', detectors, actionData, mood,/*editingBehavior,*/ viz = {};
+var socket, control = 'auto', detectors, actionData, mood, /*editingBehavior,*/ viz = {};
 
 viz.dimensions = {};
 viz.canvasWidth = 384;
@@ -482,7 +482,10 @@ function editBehavior() {
 function displayBehaviors(behaviorTable) {
     var behaviors,
         bTable = document.getElementById("behaviorTable"),
-        bTableRow;
+        bTableRow,
+        moodSelect,
+        moods,
+        option;
 
     if (behaviorTable) {
         behaviors = JSON.parse(behaviorTable).chasing;
@@ -491,6 +494,17 @@ function displayBehaviors(behaviorTable) {
     }
 
     // if moods, Build mood dropdown
+    if (actionData.mood) {
+        //console.log(actionData.mood.perform.setMood[0].options);
+        moods = actionData.mood.perform.setMood[0].options;
+        moodSelect = document.getElementById("mood-select");
+        moods.forEach(function (m) {
+            option = document.createElement("option");
+            option.value = m;
+            option.textContent = m;
+            moodSelect.appendChild(option);
+        });
+    }
 
     behaviors.forEach(function (behavior, index) {
         bTableRow = document.createElement("option");
