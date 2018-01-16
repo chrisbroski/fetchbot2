@@ -21,7 +21,7 @@ function Behaviors(senses, actions, config) {
     }
 
     function respond() {
-        var selectedBehavior, response;
+        var bTable, selectedBehavior, response;
 
         // Skip if under manual control
         // This should be handled by the Actions module so we still set current action state
@@ -29,12 +29,18 @@ function Behaviors(senses, actions, config) {
             return false;
         }
 
-        selectedBehavior = global.behaviorTable.find(function (behavior) {
+        var mood = senses.senseState("currentAction");//["mood"];
+        if (mood.mood && mood.mood.length > 1 && behaviorTable[mood.mood[1]]) {
+            bTable = behaviorTable[mood.mood[1]];
+        } else {
+            bTable = behaviorTable[Object.keys(behaviorTable)[0]];
+        }
+        selectedBehavior = bTable.find(function (behavior) {
             return (detectorMatch(behavior.situation, senses.senseState().detectors));
         });
         if (!selectedBehavior) {
             // Let's assume the first behavior is the default
-            selectedBehavior = global.behaviorTable[0];
+            selectedBehavior = bTable[0];
         }
         response = selectedBehavior.response;
 
@@ -50,9 +56,9 @@ function Behaviors(senses, actions, config) {
         actions.dispatch(response[0], response[1], response[2], response[3]);
     }
 
-    this.updateBTable = function updateBTable(newBTable) {
+    /*this.updateBTable = function updateBTable(newBTable) {
         global.behaviorTable = newBTable;
-    };
+    };*/
 
     function init() {
         global.behaviorTable = behaviorTable;

@@ -1,7 +1,7 @@
 /*jslint browser: true, sloppy: true */
 /*global io */
 
-var socket, control = 'auto', detectors, actionData, editingBehavior, viz = {};
+var socket, control = 'auto', detectors, actionData, mood,/*editingBehavior,*/ viz = {};
 
 viz.dimensions = {};
 viz.canvasWidth = 384;
@@ -44,6 +44,10 @@ function describeAction(action) {
     Object.keys(action).forEach(function (a) {
         var caPre = document.querySelector('#actions fieldset[data-action="' + a + '"] pre');
         caPre.textContent = action[a][0] + "\n" + action[a][1] + ": " + JSON.stringify(action[a][2]);
+        //console.log(a, action[a]);
+        if (a === "mood") {
+            mood = action[a][1];
+        }
     });
 }
 
@@ -145,17 +149,15 @@ function createRule(w, h) {
 
 function senseStateReceived(senseState) {
     var jsonState = JSON.parse(senseState),
-        jsonString,
-        currentAction;
+        jsonString;
 
     if (!detectors) {
         detectors = true;
         displayDetectors(jsonState.detectors);
     }
 
-    currentAction = jsonState.currentAction;
     // I could check to see if this changed before doing useless DOM manipulation
-    describeAction(currentAction);
+    describeAction(jsonState.currentAction);
     delete jsonState.currentAction;
     jsonString = JSON.stringify(jsonState, null, '    ');
 
@@ -164,7 +166,7 @@ function senseStateReceived(senseState) {
         createRule(jsonState.perceptions.dimensions[0], jsonState.perceptions.dimensions[1]);
     }
 
-    // Paint visuaslisations
+    // Paint visualisations
     Object.keys(viz.layers).forEach(function (v) {
         if (viz.layers[v].type !== "raw") {
             paintViz(v, jsonState.perceptions[v]);
@@ -471,11 +473,11 @@ function behaviorDisplay(behavior) {
     }
     return sit + "→ maneuver: " + behavior.response[1];
 }
-
+/*
 function editBehavior() {
     editingBehavior = this.value;
     populateBehavior(this.textContent);
-}
+}*/
 
 function displayBehaviors(behaviorTable) {
     var behaviors,
@@ -483,16 +485,18 @@ function displayBehaviors(behaviorTable) {
         bTableRow;
 
     if (behaviorTable) {
-        behaviors = JSON.parse(behaviorTable);
+        behaviors = JSON.parse(behaviorTable).chasing;
     } else {
         behaviors = [];
     }
+
+    // if moods, Build mood dropdown
 
     behaviors.forEach(function (behavior, index) {
         bTableRow = document.createElement("option");
         bTableRow.value = index;
         bTableRow.textContent = behaviorDisplay(behavior);
-        bTableRow.ondblclick = editBehavior;
+        // bTableRow.ondblclick = editBehavior;
         bTable.appendChild(bTableRow);
     });
 }
@@ -649,7 +653,7 @@ function init() {
     };
     document.getElementById("saveBehavior").onclick = function () {
         socket.emit('btable', getBehaviorTable());
-    };*/
+    };
     document.getElementById("saveBehaviorEdit").onclick = function () {
         var bTable = document.getElementById("behaviorTable"),
             option = document.createElement("option");
@@ -665,7 +669,7 @@ function init() {
             window.console.log(editingBehavior);
             bTable.options[editingBehavior].textContent = behaviorDisplay(createBehaviorData());
         }
-    };
+    };*/
 
     socket = io({reconnection: false});
 

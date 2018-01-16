@@ -1,4 +1,12 @@
-[
-    {"situation": {"longTimeSinceRed": true}, "response": ["dc_wheels", "perform", "move", {"type": "stop"}]},
-    {"situation": {"reddot": true}, "response": ["dc_wheels", "chase"]}
-]
+{
+    "chasing": [
+        {
+            "situation": {"longTimeSinceRed": true},
+            "response": ["dc_wheels", "perform", "move", {"type": "stop"}]
+        },
+        {
+            "situation": {"reddot": true},
+            "response": ["dc_wheels", "chase"]
+        }
+    ]
+}

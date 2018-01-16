@@ -91,9 +91,9 @@ io.on('connection', function (socket) {
         config.manual = (controlType === 'manual');
     });
 
-    socket.on('btable', function (btable) {
+    /*socket.on('btable', function (btable) {
         behaviors.updateBTable(JSON.parse(btable));
-    });
+    });*/
 
     socket.on('setsenseParam', function (senseParams) {
         var arrayParams = senseParams.split(",");
