@@ -1,0 +1,170 @@
+<!doctype>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Fetchbot Brain Viewer</title>
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+<style>
+body {
+    font-family: sans-serif;
+}
+table {
+    empty-cells: show;
+}
+
+td, th {
+    padding: 0;
+    width: 20px;
+    height: 24px;
+    font-family: Helvetica, sans-serif;
+    text-align: center;
+}
+tbody td, tbody th {
+    border: 2px solid #000;
+    font-size: 12px;
+}
+
+tbody th  {
+    background: #bbb;
+}
+
+thead td, tfoot td  {
+    color: #000;
+}
+
+thead th, tfoot th  {
+    font-weight: normal;
+    color: #999;
+}
+thead td, thead th {
+    vertical-align: bottom;
+}
+tfoot td, tfoot th {
+    vertical-align: top;
+}
+
+ol {
+    margin: 2em 0;
+}
+</style>
+
+<body>
+<article>
+
+<h1>Reversed Female Pinout for Fetchbot II</h1>
+
+<table>
+<thead>
+<tr>
+<th>p<br>c<br>m<br><br>21</th>
+<th>p<br>c<br>m<br><br>20</th>
+<td>16</td>
+<th>g</th>
+<td>12</td>
+<th>g</th>
+<th>id<br>sc</th>
+<th>s<br>p<br>i<br><br>7</th>
+<th>s<br>p<br>i<br><br>8</th>
+<td>25</td>
+<th>g</th>
+<td>24</td>
+<td>23</td>
+<th>g</th>
+<th>p<br>c<br>m<br><br>18</th>
+<th>u<br>a<br>r<br>t<br><br>15</th>
+<th>u<br>a<br>r<br>t<br><br>14</th>
+<th>g</th>
+<th>5<br>V</th>
+<th>5<br>V</th>
+</tr>
+</thead>
+
+<body>
+<tr>
+<td></td>
+<td></td>
+<td>1</td>
+<th>2</th>
+<td>3</td>
+<th></th>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<th></th>
+<td></td>
+<td></td>
+<th></th>
+<td></td>
+<td></td>
+<td></td>
+<th></th>
+<td>⌁</td>
+<td>⌁</td>
+</tr>
+
+<tr>
+<th></th>
+<td>4</td>
+<td></td>
+<td>5</td>
+<td>6</td>
+<td></td>
+<td></td>
+<th></th>
+<td></td>
+<td></td>
+<td></td>
+<td>⌁</td>
+<td>7</td>
+<td>8</td>
+<td></td>
+<th></th>
+<td></td>
+<td></td>
+<td></td>
+<td>⌁</td>
+</tr>
+</body>
+
+<tfoot>
+<tr>
+<th>g</th>
+<td>26</td>
+<th>19<br><br>p<br>c<br>m</th>
+<td>13</td>
+<td>6</td>
+<td>5</td>
+<th>i<br>d<br><br>s<br>c</th>
+<th>g</th>
+<th>23<br><br>s<br>p<br>i</th>
+<th>21<br><br>s<br>p<br>i</th>
+<th>19<br><br>s<br>p<br>i</th>
+<th>3<br>V</th>
+<td>22</td>
+<td>27</td>
+<td>17</td>
+<th>g</th>
+<td>4</td>
+<th>i<br>2<br>c<br><br>5</th>
+<th>i<br>2<br>c<br><br>3</th>
+<th>3<br>V</th>
+</tr>
+</tfoot>
+
+</table>
+
+<p>The Fetchbot II design requires a female GPIO header mounted on the reverse side of a Raspberry Pi Zero W. That makes most pinout guides confusing to use as a reference, so here's a backwards one.
+
+<ol>
+<li>Blue LED
+<li>LED common ground
+<li>Green LED
+<li>Red LED
+<li>IN4 (left forward)
+<li>IN3 (left backward)
+<li>IN2 (right forward)
+<li>IN1 (right backward)
+</ol>
+
+</article>
