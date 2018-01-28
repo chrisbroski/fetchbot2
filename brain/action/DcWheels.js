@@ -8,10 +8,8 @@ function DcWheels(senses, virtual) {
     'use strict';
 
     var Gpio,
-        // rightEnable,
         rightForward,
         rightBackward,
-        // leftEnable,
         leftForward,
         leftBackward,
         performParams = {},
@@ -24,10 +22,8 @@ function DcWheels(senses, virtual) {
 
     if (!virtual) {
         Gpio = require('pigpio').Gpio;
-        // rightEnable = new Gpio(17, {mode: Gpio.OUTPUT});
         rightForward = new Gpio(22, {mode: Gpio.OUTPUT});
         rightBackward = new Gpio(27, {mode: Gpio.OUTPUT});
-        // leftEnable = new Gpio(5, {mode: Gpio.OUTPUT});
         leftForward = new Gpio(13, {mode: Gpio.OUTPUT});
         leftBackward = new Gpio(6, {mode: Gpio.OUTPUT});
     }
@@ -127,8 +123,6 @@ function DcWheels(senses, virtual) {
 
     function init() {
         if (!virtual) {
-            // rightEnable.digitalWrite(1);
-            // leftEnable.digitalWrite(1);
             motor([0, 0, 0, 0]);
         }
         senses.currentAction("dc_wheels", "perform", "move", {"type": "stop"});
