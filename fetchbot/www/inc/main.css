@@ -1,0 +1,47 @@
+/* Customize here */
+
+/* Main application header */
+body > header {
+    background: #00d;
+    color: #fff;
+}
+
+/* Hamburger menu lines */
+body > header button div {
+    background: #fff;
+}
+
+/* Menu title */
+body > nav#main h2 {
+    color: #00d;
+}
+
+/* Section headers */
+article > section > header {
+    background: #00d;
+}
+
+/* Article h1 - h6 */
+article > h1, article > h2, article > h3, article > h4, article > h5, article > h6 {
+    color: #00d;
+}
+
+/* Section h2 - h4 */
+article > section h2, article > section h3, article > section h4 {
+    color: #00d;
+}
+
+/* Footer */
+article > footer {
+    background: #00d;
+}
+
+/* Dialog h2 - h4 */
+body > div.dialog h2, body > div.dialog h3, body > div.dialog h4 {
+    color: #00d;
+}
+
+/* Tab active */
+nav.tabs a.active {
+    border-bottom: 2px solid #00d;
+}
