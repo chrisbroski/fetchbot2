@@ -264,13 +264,11 @@ function Senses(visionWidth, visionHeight, virtual) {
     };
     attention.time();
 
-    function init() {
+    this.init = function init() {
         console.log('Initialize senses module');
         attention.look(250);
         // setInterval(cleanupMoods, 5000);
-    }
-
-    init();
+    };
 }
 
 module.exports = Senses;
