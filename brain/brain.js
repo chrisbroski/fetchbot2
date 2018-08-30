@@ -33,7 +33,9 @@ visionHeight = visionWidth * 3 / 4;
 senses = new Senses(visionWidth, visionHeight, config.virtual);
 actions = new Actions(senses, config.virtual);
 behaviors = new Behaviors(senses, actions, config);
-senses.init();
+
+senses.start();
+behaviors.start();
 
 viewer = new Viewer(senses, actions, config);
 

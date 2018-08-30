@@ -264,7 +264,7 @@ function Senses(visionWidth, visionHeight, virtual) {
     };
     attention.time();
 
-    this.init = function init() {
+    this.start = function init() {
         console.log('Initialize senses module');
         attention.look(250);
         // setInterval(cleanupMoods, 5000);

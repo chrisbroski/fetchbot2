@@ -60,12 +60,10 @@ function Behaviors(senses, actions, config) {
         global.behaviorTable = newBTable;
     };*/
 
-    function init() {
+    this.start = function init() {
         global.behaviorTable = behaviorTable;
         setInterval(respond, 200);
     }
-
-    init();
 }
 
 module.exports = Behaviors;
