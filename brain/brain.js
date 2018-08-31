@@ -17,20 +17,46 @@ var Senses = require('./Senses.js'),
     senses,
     actions,
     behaviors,
-    visionWidth,
-    visionHeight;
+    cli_position,
+    supported_widths = ['32', '64', '128', '256'];
 
-config.manual = (process.argv[3] === "1");
-config.virtual = (process.argv[2] === "1");
+// Set up CLI interface
+// -m --manual
+// -g --game
+// -w --visionwidth
+// -v --version
+// -h --help help
 
-if (process.argv[4]) {
-    visionWidth = +process.argv[4];
-} else {
-    visionWidth = 128;
+config.manual = false;
+config.virtual = false;
+config.visionWidth = 128;
+config.visionHeight = 96;
+
+if (process.argv.indexOf("-m") > -1 || process.argv.indexOf("--manual") > -1) {
+    config.manual = true;
 }
-visionHeight = visionWidth * 3 / 4;
 
-senses = new Senses(visionWidth, visionHeight, config.virtual);
+if (process.argv.indexOf("-g") > -1 || process.argv.indexOf("--game") > -1) {
+    // there could be multiple game types if the argument is not a flag
+    // if more than one and none is specified, return a list of valid games
+    config.virtual = true;
+}
+
+if (process.argv.indexOf("-v") > -1 || process.argv.indexOf("--version") > -1) {
+    console.log(require('../package.json').version);
+    process.exit();
+}
+
+cli_position = process.argv.indexOf("-w");
+if (cli_position === -1) {
+    cli_position = process.argv.indexOf("--visionwidth");
+}
+if (cli_position > -1 && supported_widths.indexOf(process.argv[cli_position]) && cli_position < process.argv.length - 1) {
+    config.visionWidth = +process.argv[cli_position + 1];
+    config.visionHeight = config.visionWidth * 3 / 4;
+}
+
+senses = new Senses(config.visionWidth, config.visionHeight, config.virtual);
 actions = new Actions(senses, config.virtual);
 behaviors = new Behaviors(senses, actions, config);
 

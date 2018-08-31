@@ -1,6 +1,6 @@
 {
   "name": "fetchbot",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "description": "AI for a laser-pointer chasing robot",
   "main": "brain/brain.js",
   "dependencies": {
@@ -9,8 +9,8 @@
   },
   "devDependencies": {},
   "scripts": {
-    "start": "sudo /home/pi/n/bin/node brain/brain.js 0 0",
-    "virtual": "node brain/brain.js 1 0",
+    "start": "sudo /home/pi/n/bin/node brain/brain.js",
+    "virtual": "node brain/brain.js --game",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
