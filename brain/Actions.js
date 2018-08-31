@@ -1,15 +1,15 @@
 /*jslint node: true */
 
-function Actions(senses, virtual) {
+function Actions(senses, game) {
     'use strict';
 
     // Action performers
     var DcWheels = require('./action/DcWheels.js'),
-        dcwheels = new DcWheels(senses, virtual),
+        dcwheels = new DcWheels(senses, game),
         Mood = require('./action/Mood.js'),
         mood = new Mood(senses),
         Led = require('./action/Led.js'),
-        led = new Led(senses, virtual),
+        led = new Led(senses, game),
         actions = {"dc_wheels": {}, "mood": {}, "led": {}};
 
     // Set up performers and maneuvers from libraries
@@ -79,7 +79,7 @@ function Actions(senses, virtual) {
         }
 
         // Execute action
-        if (!virtual) {
+        if (!game) {
             actions[action].perform[act](params);
         }
     };

@@ -1,6 +1,6 @@
 /*jslint node: true */
 
-function Senses(visionWidth, visionHeight, virtual) {
+function Senses(visionWidth, visionHeight, game) {
     'use strict';
 
     // Import libraries
@@ -208,7 +208,7 @@ function Senses(visionWidth, visionHeight, virtual) {
     // Other observers can be added here for sound, temperature, velocity, smell, whatever.
 
     // virtual input
-    function virt() {
+    function play() {
         var file = "/virtual/reddot-" + visionWidth + ".raw";
         fs.readFile(__dirname + file, function (err, data) {
             if (err) {
@@ -225,8 +225,8 @@ function Senses(visionWidth, visionHeight, virtual) {
 
         timeLapseInterval = timeLapseInterval || 0;
 
-        if (virtual) {
-            virt();
+        if (game) {
+            play();
         } else {
             cam = spawn('raspiyuv', [
                 '-w', visionWidth.toString(10),

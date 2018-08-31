@@ -21,7 +21,7 @@ var Senses = require('./Senses.js'),
     cli_position,
     supported_widths = ['32', '64', '128', '256'];
 
-config.virtual = false;
+config.game = false;
 config.visionWidth = 128;
 config.visionHeight = 96;
 
@@ -33,7 +33,7 @@ if (process.argv.indexOf("-m") > -1 || process.argv.indexOf("--manual") > -1) {
 if (process.argv.indexOf("-g") > -1 || process.argv.indexOf("--game") > -1) {
     // there could be multiple game types if the argument is not a flag
     // if more than one and none is specified, return a list of valid games
-    config.virtual = true;
+    config.game = true;
 }
 
 if (process.argv.indexOf("-v") > -1 || process.argv.indexOf("--version") > -1) {
@@ -55,8 +55,8 @@ if (cli_position > -1) {
     }
 }
 
-senses = new Senses(config.visionWidth, config.visionHeight, config.virtual);
-actions = new Actions(senses, config.virtual);
+senses = new Senses(config.visionWidth, config.visionHeight, config.game);
+actions = new Actions(senses, config.game);
 behaviors = new Behaviors(senses, actions, config);
 
 senses.start();

@@ -1,6 +1,6 @@
 /*jslint node: true */
 
-function Led(senses, virtual) {
+function Led(senses, game) {
     "use strict";
 
     var Gpio, red, green, blue, color = {}, lightParams;
@@ -41,7 +41,7 @@ function Led(senses, virtual) {
     this.perform.light = light;
 
     function init() {
-        if (!virtual) {
+        if (!game) {
             Gpio = require('pigpio').Gpio;
             red = new Gpio(26, {mode: Gpio.OUTPUT});
             green = new Gpio(12, {mode: Gpio.OUTPUT});
