@@ -60,7 +60,7 @@ function Viewer(senses, actions, config) {
         });
 
         socket.on('control', function (controlType) {
-            config.manual = (controlType === 'manual');
+            global.config.manual = (controlType === 'manual');
         });
 
         /*socket.on('btable', function (btable) {

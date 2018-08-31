@@ -8,6 +8,7 @@ It also connects to a viewer for perception visualization and manual action cont
 global.params = {};
 global.params.senses = {};
 global.params.actions = {};
+global.config = {"manual": false};
 
 var Senses = require('./Senses.js'),
     Actions = require('./Actions.js'),
@@ -20,20 +21,13 @@ var Senses = require('./Senses.js'),
     cli_position,
     supported_widths = ['32', '64', '128', '256'];
 
-// Set up CLI interface
-// -m --manual
-// -g --game
-// -w --visionwidth
-// -v --version
-// -h --help help
-
-config.manual = false;
 config.virtual = false;
 config.visionWidth = 128;
 config.visionHeight = 96;
 
+// Set up CLI interface
 if (process.argv.indexOf("-m") > -1 || process.argv.indexOf("--manual") > -1) {
-    config.manual = true;
+    global.config.manual = true;
 }
 
 if (process.argv.indexOf("-g") > -1 || process.argv.indexOf("--game") > -1) {
@@ -51,9 +45,14 @@ cli_position = process.argv.indexOf("-w");
 if (cli_position === -1) {
     cli_position = process.argv.indexOf("--visionwidth");
 }
-if (cli_position > -1 && supported_widths.indexOf(process.argv[cli_position]) && cli_position < process.argv.length - 1) {
-    config.visionWidth = +process.argv[cli_position + 1];
-    config.visionHeight = config.visionWidth * 3 / 4;
+if (cli_position > -1) {
+    if (supported_widths.indexOf(process.argv[cli_position]) > -1) {
+        config.visionWidth = +process.argv[cli_position + 1];
+        config.visionHeight = config.visionWidth * 3 / 4;
+    } else {
+        console.log("Supported vision widths: ", supported_widths.join(", "));
+        process.exit();
+    }
 }
 
 senses = new Senses(config.visionWidth, config.visionHeight, config.virtual);
