@@ -14,10 +14,13 @@ var Senses = require('./Senses.js'),
     Actions = require('./Actions.js'),
     Behaviors = require('./Behaviors.js'),
     Viewer = require('./Viewer.js'),
+    Games = require('./Games.js'),
     config = {},
     senses,
     actions,
     behaviors,
+    viewer,
+    games,
     cli_position,
     supported_widths = ['32', '64', '128', '256'];
 
@@ -26,6 +29,36 @@ config.visionWidth = 128;
 config.visionHeight = 96;
 
 // Set up CLI interface
+if (process.argv.indexOf("-v") > -1 || process.argv.indexOf("--version") > -1) {
+    console.log(require('../package.json').version);
+    process.exit();
+}
+
+if (process.argv.indexOf("-h") > -1 || process.argv.indexOf("--help") > -1) {
+    console.log(`
+DESCRIPTION
+
+    Fetchbot is a system of robot behavior intended as a basic
+    starting point, and to research application architecture.
+
+ARGUMENTS
+
+    --version, -v       Version of npm package
+
+    --game, -g <game>   Start brain in game mode. If more than one
+                        game is available, list supported games.
+
+    --manual, -m        Start brain in manual control mode
+
+    --width, -w         Run brain with specified visual resolution
+                        (default 128) If an unsupported resolution
+                        is specified, list valid parameters
+
+    --help, -h          This documentation
+    `);
+    process.exit();
+}
+
 if (process.argv.indexOf("-m") > -1 || process.argv.indexOf("--manual") > -1) {
     global.config.manual = true;
 }
@@ -34,11 +67,7 @@ if (process.argv.indexOf("-g") > -1 || process.argv.indexOf("--game") > -1) {
     // there could be multiple game types if the argument is not a flag
     // if more than one and none is specified, return a list of valid games
     config.game = true;
-}
-
-if (process.argv.indexOf("-v") > -1 || process.argv.indexOf("--version") > -1) {
-    console.log(require('../package.json').version);
-    process.exit();
+    games = new Games();
 }
 
 cli_position = process.argv.indexOf("-w");
@@ -55,7 +84,7 @@ if (cli_position > -1) {
     }
 }
 
-senses = new Senses(config.visionWidth, config.visionHeight, config.game);
+senses = new Senses(config.visionWidth, config.visionHeight, games);
 actions = new Actions(senses, config.game);
 behaviors = new Behaviors(senses, actions, config);
 
@@ -63,6 +92,7 @@ senses.start();
 behaviors.start();
 
 viewer = new Viewer(senses, actions, config);
+viewer.start();
 
 // Code below is to handle exits more gracefully
 // From http://stackoverflow.com/questions/14031763/#answer-14032965

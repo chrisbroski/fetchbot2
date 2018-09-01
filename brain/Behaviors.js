@@ -62,7 +62,7 @@ function Behaviors(senses, actions, config) {
     this.start = function init() {
         global.behaviorTable = behaviorTable;
         setInterval(respond, 200);
-    }
+    };
 }
 
 module.exports = Behaviors;

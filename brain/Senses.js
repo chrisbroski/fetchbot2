@@ -1,11 +1,10 @@
 /*jslint node: true */
 
-function Senses(visionWidth, visionHeight, game) {
+function Senses(visionWidth, visionHeight, games) {
     'use strict';
 
     // Import libraries
     var spawn = require('child_process').spawn,
-        fs = require("fs"),
         Fetchbot = require('./sense/Fetchbot.js'),
         fetchbot = new Fetchbot(),
         Time = require('./sense/Time.js'),
@@ -207,17 +206,6 @@ function Senses(visionWidth, visionHeight, game) {
 
     // Other observers can be added here for sound, temperature, velocity, smell, whatever.
 
-    // virtual input
-    function play() {
-        var file = "/virtual/reddot-" + visionWidth + ".raw";
-        fs.readFile(__dirname + file, function (err, data) {
-            if (err) {
-                throw err;
-            }
-            observers.vision(data);
-        });
-    }
-
     // *Attention* is responsible for triggering observers and perceivers.
     attention = {};
     attention.look = function (timeLapseInterval) {
@@ -225,8 +213,8 @@ function Senses(visionWidth, visionHeight, game) {
 
         timeLapseInterval = timeLapseInterval || 0;
 
-        if (game) {
-            play();
+        if (games) {
+            games.play(observers);
         } else {
             cam = spawn('raspiyuv', [
                 '-w', visionWidth.toString(10),
