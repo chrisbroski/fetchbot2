@@ -1,6 +1,6 @@
 /*jslint node: true */
 
-function Senses(visionWidth, visionHeight, games) {
+function Senses(visionWidth, visionHeight, game) {
     'use strict';
 
     // Import libraries
@@ -213,8 +213,8 @@ function Senses(visionWidth, visionHeight, games) {
 
         timeLapseInterval = timeLapseInterval || 0;
 
-        if (games) {
-            games.play(observers);
+        if (game) {
+            game.play(observers);
         } else {
             cam = spawn('raspiyuv', [
                 '-w', visionWidth.toString(10),

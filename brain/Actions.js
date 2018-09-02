@@ -76,6 +76,10 @@ function Actions(senses, game) {
         if (currentAction !== newAction) { // if not current action
             senses.currentAction(action, actType, act, params);
             console.log(action, actType, act, params);
+
+            if (game) {
+                game.act({"action": action, "act": act, "params": params});
+            }
         }
 
         // Execute action

@@ -1,34 +1,39 @@
-/*jslint node: true, bitwise: true */
+/*jshint esversion: 6 */
+/*jshint strict: true */
+/*jslint unused: true */
 
-function Games() {
+function Games(gameName) {
     'use strict';
 
     var fs = require("fs"),
-        photo = "/games/find-dot-128/reddot-128.raw",
-        observe;
+        Games,
+        game;
 
-    function play(observers) {
-        observe = observers.vision;
-        show();
+    // Load game
+    if (!gameName) {
+        // Set a default, if you want
+        gameName = "dot-128";
+    }
+    try {
+        Games = require(`./games/${gameName}/game.js`);
+    } catch (e) {
+        console.log(`game '${gameName}' not found.`);
+        console.log("valid game names are: ");
+        games();
+        process.exit();
     }
 
-    function show() {
-        fs.readFile(__dirname + photo, function (err, data) {
-            if (err) {
-                throw err;
-            }
-            observe(data);
-        });
+    game = new Games();
+
+    function games() {
+        console.log("    ", fs.readdirSync(`${__dirname}/games/`).filter((f) => {
+            return f !== ".DS_Store";
+        }).join(", "));
     }
 
-    function act() {
-        photo = "/games/find-dot-128/reddot-128.raw";
-        show();
-    }
-
-    this.play = play;
-    this.show = show;
-    this.act = act;
+    this.play = game.play;
+    this.act = game.act;
+    this.games = games;
 }
 
 module.exports = Games;

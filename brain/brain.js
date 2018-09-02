@@ -1,4 +1,4 @@
-/*jslint node: true, sloppy: true, bitwise: true, nomen: true */
+/*jshint esversion: 6 */
 
 /*
 Brain.js loads and initializes Senses, Actions, and Behaviors modules.
@@ -20,11 +20,11 @@ var Senses = require('./Senses.js'),
     actions,
     behaviors,
     viewer,
-    games,
+    game,
+    gameName,
     cli_position,
     supported_widths = ['32', '64', '128', '256'];
 
-config.game = false;
 config.visionWidth = 128;
 config.visionHeight = 96;
 
@@ -43,7 +43,7 @@ DESCRIPTION
 
 ARGUMENTS
 
-    --version, -v       Version of npm package
+    --version, -v       Version of main npm package
 
     --game, -g <game>   Start brain in game mode. If more than one
                         game is available, list supported games.
@@ -55,7 +55,7 @@ ARGUMENTS
                         is specified, list valid parameters
 
     --help, -h          This documentation
-    `);
+`);
     process.exit();
 }
 
@@ -63,11 +63,18 @@ if (process.argv.indexOf("-m") > -1 || process.argv.indexOf("--manual") > -1) {
     global.config.manual = true;
 }
 
-if (process.argv.indexOf("-g") > -1 || process.argv.indexOf("--game") > -1) {
-    // there could be multiple game types if the argument is not a flag
-    // if more than one and none is specified, return a list of valid games
-    config.game = true;
-    games = new Games();
+cli_position = process.argv.indexOf("-g");
+if (cli_position === -1) {
+    cli_position = process.argv.indexOf("--game");
+}
+if (cli_position > -1) {
+    if (cli_position < process.argv.length - 1) {
+        gameName = process.argv[cli_position + 1];
+        if (gameName.slice(0, 1) === "-") {
+            gameName = null;
+        }
+    }
+    game = new Games(gameName);
 }
 
 cli_position = process.argv.indexOf("-w");
@@ -75,7 +82,7 @@ if (cli_position === -1) {
     cli_position = process.argv.indexOf("--visionwidth");
 }
 if (cli_position > -1) {
-    if (supported_widths.indexOf(process.argv[cli_position]) > -1) {
+    if (supported_widths.indexOf(process.argv[cli_position + 1]) > -1) {
         config.visionWidth = +process.argv[cli_position + 1];
         config.visionHeight = config.visionWidth * 3 / 4;
     } else {
@@ -84,14 +91,14 @@ if (cli_position > -1) {
     }
 }
 
-senses = new Senses(config.visionWidth, config.visionHeight, games);
-actions = new Actions(senses, config.game);
+// Instantiate main modules
+senses = new Senses(config.visionWidth, config.visionHeight, game);
+actions = new Actions(senses, game);
 behaviors = new Behaviors(senses, actions, config);
+viewer = new Viewer(senses, actions, config);
 
 senses.start();
 behaviors.start();
-
-viewer = new Viewer(senses, actions, config);
 viewer.start();
 
 // Code below is to handle exits more gracefully

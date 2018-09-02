@@ -1,8 +1,10 @@
 /*jslint node: true */
 
 global.params.senses.brightRed = {};
-global.params.senses.brightRed.luma = 100;
-global.params.senses.brightRed.chromaV = 190;
+// global.params.senses.brightRed.luma = 100;
+// global.params.senses.brightRed.chromaV = 190;
+global.params.senses.brightRed.luma = 130;
+global.params.senses.brightRed.chromaV = 160;
 global.params.senses.edge = {};
 global.params.senses.edge.diff = 50;
 global.params.senses.center = {};
