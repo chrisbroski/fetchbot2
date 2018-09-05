@@ -7,7 +7,8 @@ function Game() {
 
     var fs = require("fs"),
         observers,
-        activePhoto = 0;
+        activePhoto = 0,
+        timer;
 
     function circle(idx) {
         if (idx > 7) {
@@ -30,20 +31,31 @@ function Game() {
 
     function play(senseObservers) {
         observers = senseObservers;
-        activePhoto = circle(Math.floor(Math.random() * 7));
+        // activePhoto = circle(Math.floor(Math.random() * 7));
+        activePhoto = 1;
         show(`view${activePhoto}.raw`);
+    }
+
+    function turn(typeParamRight4) {
+        if (timer) {
+            clearTimeout(timer);
+        }
+        if (typeParamRight4 === 'ight' || typeParamRight4 === 'left') {
+            if (typeParamRight4 === 'ight') {
+                activePhoto = circle(activePhoto - 1);
+            } else {
+                activePhoto = circle(activePhoto + 1);
+            }
+
+            show(`view${activePhoto}.raw`);
+            timer = setTimeout(turn.bind(null, typeParamRight4), 3000);
+        }
     }
 
     function act(actionData) {
         if (actionData.action === 'dc_wheels' && actionData.act === 'move') {
-            if (actionData.params.type.slice(-4) === 'ight') {
-                activePhoto = circle(activePhoto + 1);
-            }
-            if (actionData.params.type.slice(-4) === 'left') {
-                activePhoto = circle(activePhoto - 1);
-            }
+            turn(actionData.params.type.slice(-4));
         }
-        show(`view${activePhoto}.raw`);
     }
 
     this.play = play;
