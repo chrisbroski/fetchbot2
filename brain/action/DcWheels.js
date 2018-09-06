@@ -4,7 +4,7 @@ global.params.actions = {};
 global.params.actions.search = {};
 global.params.actions.search.maxDuration = 2000;
 
-function DcWheels(senses, virtual) {
+function DcWheels(senses, game) {
     'use strict';
 
     var Gpio,
@@ -20,7 +20,7 @@ function DcWheels(senses, virtual) {
     this.perform = {};
     this.maneuver = {};
 
-    if (!virtual) {
+    if (!game) {
         Gpio = require('pigpio').Gpio;
         rightForward = new Gpio(22, {mode: Gpio.OUTPUT});
         rightBackward = new Gpio(27, {mode: Gpio.OUTPUT});
@@ -122,7 +122,7 @@ function DcWheels(senses, virtual) {
     };
 
     function init() {
-        if (!virtual) {
+        if (!game) {
             motor([0, 0, 0, 0]);
         }
         senses.currentAction("dc_wheels", "perform", "move", {"type": "stop"});

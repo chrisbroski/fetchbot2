@@ -24,8 +24,7 @@ function Behaviors(senses, actions, config) {
         var bTable, selectedBehavior, response;
 
         // Skip if under manual control
-        // This should be handled by the Actions module so we still set current action state
-        if (config.manual) {
+        if (global.config.manual) {
             return false;
         }
 
@@ -60,12 +59,10 @@ function Behaviors(senses, actions, config) {
         global.behaviorTable = newBTable;
     };*/
 
-    function init() {
+    this.start = function init() {
         global.behaviorTable = behaviorTable;
         setInterval(respond, 200);
-    }
-
-    init();
+    };
 }
 
 module.exports = Behaviors;

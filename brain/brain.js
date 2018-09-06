@@ -1,4 +1,4 @@
-/*jslint node: true, sloppy: true, bitwise: true, nomen: true */
+/*jshint esversion: 6 */
 
 /*
 Brain.js loads and initializes Senses, Actions, and Behaviors modules.
@@ -8,112 +8,98 @@ It also connects to a viewer for perception visualization and manual action cont
 global.params = {};
 global.params.senses = {};
 global.params.actions = {};
+global.config = {"manual": false};
 
-var fs = require('fs'),
-    http = require('http'),
-    server = http.createServer(app),
-    io = require('socket.io')(server),
-    Senses = require('./Senses.js'),
+var Senses = require('./Senses.js'),
     Actions = require('./Actions.js'),
     Behaviors = require('./Behaviors.js'),
-    port = 3791,
+    Viewer = require('./Viewer.js'),
+    Games = require('./Games.js'),
     config = {},
     senses,
     actions,
     behaviors,
-    visionWidth,
-    visionHeight,
-    frameCount = 0,
-    prevStateString = "";
+    viewer,
+    game,
+    gameName,
+    cli_position,
+    supported_widths = ['32', '64', '128', '256'];
 
-config.manual = (process.argv[3] === "1");
-config.virtual = (process.argv[2] === "1");
+config.visionWidth = 128;
+config.visionHeight = 96;
 
-if (process.argv[4]) {
-    visionWidth = +process.argv[4];
-} else {
-    visionWidth = 128;
+// Set up CLI interface
+if (process.argv.indexOf("-v") > -1 || process.argv.indexOf("--version") > -1) {
+    console.log(require('../package.json').version);
+    process.exit();
 }
-visionHeight = visionWidth * 3 / 4;
 
-senses = new Senses(visionWidth, visionHeight, config.virtual);
-actions = new Actions(senses, config.virtual);
-behaviors = new Behaviors(senses, actions, config);
+if (process.argv.indexOf("-h") > -1 || process.argv.indexOf("--help") > -1) {
+    console.log(`
+DESCRIPTION
 
-function app(req, rsp) {
-    if (req.url === "/img/favicon.png") {
-        rsp.writeHead(200, {'Content-Type': 'image/png'});
-        fs.createReadStream(__dirname + '/viewer/favicon.png').pipe(rsp);
-    } else if (req.url === "/viewer.css") {
-        rsp.writeHead(200, {'Content-Type': 'text/css'});
-        fs.createReadStream(__dirname + '/viewer/viewer.css').pipe(rsp);
-    } else if (req.url === "/viewer.js") {
-        rsp.writeHead(200, {'Content-Type': 'application/javascript'});
-        fs.createReadStream(__dirname + '/viewer/viewer.js').pipe(rsp);
+    Fetchbot is a system of robot behavior intended as a basic
+    starting point, and to research application architecture.
+
+ARGUMENTS
+
+    --version, -v       Version of main npm package
+
+    --game, -g <game>   Start brain in game mode. If more than one
+                        game is available, list supported games.
+
+    --manual, -m        Start brain in manual control mode
+
+    --width, -w         Run brain with specified visual resolution
+                        (default 128) If an unsupported resolution
+                        is specified, list valid parameters
+
+    --help, -h          This documentation
+`);
+    process.exit();
+}
+
+if (process.argv.indexOf("-m") > -1 || process.argv.indexOf("--manual") > -1) {
+    global.config.manual = true;
+}
+
+cli_position = process.argv.indexOf("-g");
+if (cli_position === -1) {
+    cli_position = process.argv.indexOf("--game");
+}
+if (cli_position > -1) {
+    if (cli_position < process.argv.length - 1) {
+        gameName = process.argv[cli_position + 1];
+        if (gameName.slice(0, 1) === "-") {
+            gameName = null;
+        }
+    }
+    game = new Games(gameName);
+}
+
+cli_position = process.argv.indexOf("-w");
+if (cli_position === -1) {
+    cli_position = process.argv.indexOf("--visionwidth");
+}
+if (cli_position > -1) {
+    if (supported_widths.indexOf(process.argv[cli_position + 1]) > -1) {
+        config.visionWidth = +process.argv[cli_position + 1];
+        config.visionHeight = config.visionWidth * 3 / 4;
     } else {
-        rsp.writeHead(200, {'Content-Type': 'text/html; charset=utf-8'});
-        fs.createReadStream(__dirname + '/viewer/viewer.html').pipe(rsp);
+        console.log("Supported vision widths: ", supported_widths.join(", "));
+        process.exit();
     }
 }
 
-function sendSenseData() {
-    setInterval(function () {
-        var stateString = JSON.stringify(senses.senseState());
-        frameCount += 1;
+// Instantiate main modules
+senses = new Senses(config.visionWidth, config.visionHeight, game);
+actions = new Actions(senses, game);
+behaviors = new Behaviors(senses, actions, config);
+viewer = new Viewer(senses, actions, config);
 
-        // if changed, send sense data to viewer 10x per second
-        // This needs to accomodate viewer refresh
-        // if (stateString !== prevStateString) {
-        // prevStateString = stateString;
-        io.emit('senseState', stateString);
-        if (frameCount % 10 === 1) {
-            io.emit('senseRaw', senses.senseRaw());
-        }
-        // }
-    }, 100);
-}
-
-io.on('connection', function (socket) {
-    console.log('Fetchbot viewer client connected');
-
-    io.emit('actions', JSON.stringify(actions.dispatch()));
-    io.emit('behaviors', JSON.stringify(global.behaviorTable));
-    io.emit('getSenseParams', JSON.stringify(global.params.senses));
-    io.emit('getActionParams', JSON.stringify(global.params.actions));
-    sendSenseData();
-
-    socket.on("action", function (actionData) {
-        var actionArray = JSON.parse(actionData);
-        actions.dispatch(actionArray[0], actionArray[1], actionArray[2], actionArray[3]);
-    });
-
-    socket.on('control', function (controlType) {
-        config.manual = (controlType === 'manual');
-    });
-
-    /*socket.on('btable', function (btable) {
-        behaviors.updateBTable(JSON.parse(btable));
-    });*/
-
-    socket.on('setsenseParam', function (senseParams) {
-        var arrayParams = senseParams.split(",");
-        global.params.senses[arrayParams[0]][arrayParams[1]] = +arrayParams[2];
-        senses.perceive();
-    });
-
-    socket.on('setactionParam', function (actionParams) {
-        var arrayParams = actionParams.split(",");
-        global.params.actions[arrayParams[0]][arrayParams[1]] = +arrayParams[2];
-    });
-
-    socket.on('disconnect', function () {
-        console.log('Fetchbot viewer client disconnected');
-    });
-});
-
-server.listen(port, function () {
-    console.log('Broadcasting to fetchbot viewer at http://0.0.0.0:' + port);
-});
+senses.start();
+behaviors.start();
+viewer.start();
 
 // Code below is to handle exits more gracefully
 // From http://stackoverflow.com/questions/14031763/#answer-14032965
