@@ -5,13 +5,15 @@
   "main": "brain/brain.js",
   "dependencies": {
     "pigpio": "^0.6.3",
-    "socket.io": "^2.0.4"
+    "socket.io": "^2.1.1",
+    "websocket": "^1.0.26"
   },
   "devDependencies": {},
   "scripts": {
     "start": "sudo /home/pi/n/bin/node brain/brain.js 0 0",
     "virtual": "node brain/brain.js 1 0",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "gpio": "sudo /home/pi/n/bin/node misc/gpio-tool.js"
   },
   "repository": {
     "type": "git",

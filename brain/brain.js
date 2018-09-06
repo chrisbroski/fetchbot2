@@ -112,7 +112,7 @@ io.on('connection', function (socket) {
 });
 
 server.listen(port, function () {
-    console.log('Broadcasting to fetchbot viewer at http://0.0.0.0/:' + port);
+    console.log('Broadcasting to fetchbot viewer at http://0.0.0.0:' + port);
 });
 
 // Code below is to handle exits more gracefully
