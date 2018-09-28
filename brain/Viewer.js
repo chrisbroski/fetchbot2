@@ -6,7 +6,8 @@ function Viewer(senses, actions, config) {
     var fs = require('fs'),
         http = require('http'),
         server = http.createServer(app),
-        io = require('socket.io')(server),
+        //io = require('socket.io')(server),
+        WebSocketServer = require('websocket').server,
         port = 3791,
         frameCount = 0,
         prevStateString = "",
@@ -46,7 +47,7 @@ function Viewer(senses, actions, config) {
     }
 
     function init() {
-        io.on('connection', function (socket) {
+        /*io.on('connection', function (socket) {
             console.log('Fetchbot viewer client connected');
 
             io.emit('actions', JSON.stringify(actions.dispatch()));
@@ -65,9 +66,9 @@ function Viewer(senses, actions, config) {
                 console.log("Manual control: ", global.config.manual);
             });
 
-            /*socket.on('btable', function (btable) {
-                behaviors.updateBTable(JSON.parse(btable));
-            });*/
+            // socket.on('btable', function (btable) {
+            //     behaviors.updateBTable(JSON.parse(btable));
+            // });
 
             socket.on('setsenseParam', function (senseParams) {
                 var arrayParams = senseParams.split(",");
@@ -83,11 +84,29 @@ function Viewer(senses, actions, config) {
             socket.on('disconnect', function () {
                 console.log('Fetchbot viewer client disconnected');
             });
+        });*/
+        socketServer.on('request', function(req) {
+            var conn = req.accept("", req.origin);
+            conn.sendUTF("powerOn");
+
+            conn.on('message', function(msg) {
+                console.log("Received Message: " + msg.utf8Data);
+                toggleOutputPin(msg.utf8Data);
+            });
         });
     }
 
     server.listen(port, function () {
         console.log('Broadcasting to fetchbot viewer at http://0.0.0.0/:' + port);
+    });
+
+    var socketServer = new WebSocketServer({
+        httpServer: server,
+        autoAcceptConnections: false
+    });
+
+    socketServer.on('connect', function(connection) {
+        console.log('Fetchbot viewer client connected');
     });
 
     this.start = init;
