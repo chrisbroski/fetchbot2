@@ -1,8 +1,8 @@
 /*jslint node: true */
 
-global.params.actions = {};
-global.params.actions.search = {};
-global.params.actions.search.maxDuration = 2000;
+global.tunable.actions = {};
+global.tunable.actions.search = {};
+global.tunable.actions.search.maxDuration = 2000;
 
 function DcWheels(senses, game) {
     'use strict';
@@ -93,7 +93,7 @@ function DcWheels(senses, game) {
     };
 
     function resetTimer() {
-        searchTimer = +(new Date()) + (Math.random() * global.params.actions.search.maxDuration);
+        searchTimer = +(new Date()) + (Math.random() * global.tunable.actions.search.maxDuration);
     }
 
     this.maneuver.search = function () {

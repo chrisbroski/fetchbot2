@@ -1,14 +1,14 @@
 /*jslint node: true */
 
-global.params.senses.brightRed = {};
-// global.params.senses.brightRed.luma = 100;
-// global.params.senses.brightRed.chromaV = 190;
-global.params.senses.brightRed.luma = 130;
-global.params.senses.brightRed.chromaV = 160;
-global.params.senses.edge = {};
-global.params.senses.edge.diff = 50;
-global.params.senses.center = {};
-global.params.senses.center.width = 0.2;
+global.tunable.senses.brightRed = {};
+// global.tunable.senses.brightRed.luma = 100;
+// global.tunable.senses.brightRed.chromaV = 190;
+global.tunable.senses.brightRed.luma = 130;
+global.tunable.senses.brightRed.chromaV = 160;
+global.tunable.senses.edge = {};
+global.tunable.senses.edge.diff = 50;
+global.tunable.senses.center = {};
+global.tunable.senses.center.width = 0.2;
 
 function Fetchbot() {
     'use strict';
@@ -18,7 +18,7 @@ function Fetchbot() {
     function testEdge(ii, visionWidth, imgPixelSize, luma) {
         var adjacent = [],
             val = luma[ii],
-            diff = global.params.senses.edge.diff;
+            diff = global.tunable.senses.edge.diff;
 
         if (ii > visionWidth) {
             adjacent.push(luma[ii - visionWidth]); // top
@@ -53,7 +53,7 @@ function Fetchbot() {
     };
 
     function redColumns(visionWidth) {
-        var centerWidth = global.params.senses.center.width,
+        var centerWidth = global.tunable.senses.center.width,
             leftSide = (1.0 - centerWidth) / 2.0,
             rightSide = leftSide + centerWidth,
             redCount = [0, 0, 0];
@@ -104,7 +104,7 @@ function Fetchbot() {
 
             loc2val = loc2.reduce(addLuma, 0);
 
-            if (v[ii] > global.params.senses.brightRed.chromaV && loc2val / 4 > global.params.senses.brightRed.luma) {
+            if (v[ii] > global.tunable.senses.brightRed.chromaV && loc2val / 4 > global.tunable.senses.brightRed.luma) {
                 dots.push(ii);
             }
         }

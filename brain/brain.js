@@ -5,9 +5,10 @@ Brain.js loads and initializes Senses, Actions, and Behaviors modules.
 It also connects to a viewer for perception visualization and manual action control.
 */
 
-global.params = {};
-global.params.senses = {};
-global.params.actions = {};
+global.tunable = {};
+global.tunable.senses = {};
+global.tunable.behaviors = {};
+global.tunable.actions = {};
 global.config = {"manual": false};
 
 var Senses = require('./Senses.js'),

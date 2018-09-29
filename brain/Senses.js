@@ -247,7 +247,7 @@ function Senses(visionWidth, visionHeight, game) {
 
     attention.time = function () {
         // Wait, should detectors be with their sense?
-        state.detectors.longTimeSinceRed = (global.params.senses.since.red < time.sinceRed());
+        state.detectors.longTimeSinceRed = (global.tunable.senses.since.red < time.sinceRed());
         setTimeout(attention.time, 5000);
     };
     attention.time();

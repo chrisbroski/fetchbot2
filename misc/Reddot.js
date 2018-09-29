@@ -1,10 +1,10 @@
 /*jslint node: true */
 
-// Set global params: global.params[module name][param name]
-global.params.reddot = {};
-global.params.reddot.findRed = {};
-global.params.reddot.findRed.luma = 100;
-global.params.reddot.findRed.chromaV = 190;
+// Set global params: global.tunable[module name][param name]
+global.tunable.reddot = {};
+global.tunable.reddot.findRed = {};
+global.tunable.reddot.findRed.luma = 100;
+global.tunable.reddot.findRed.chromaV = 190;
 
 function Reddot() {
     'use strict';
@@ -63,8 +63,8 @@ function Reddot() {
             len = v.length,
             loc2,
             loc2val,
-            redChromaV = global.params.reddot.findRed.chromaV,
-            redLuma = global.params.reddot.findRed.luma;
+            redChromaV = global.tunable.reddot.findRed.chromaV,
+            redLuma = global.tunable.reddot.findRed.luma;
 
         dots.length = 0;
 
