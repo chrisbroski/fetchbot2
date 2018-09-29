@@ -1,7 +1,7 @@
 /*jslint node: true */
 
-global.params.senses.since = {};
-global.params.senses.since.red = 300;
+global.tunable.senses.since = {};
+global.tunable.senses.since.red = 300;
 
 function Time() {
     "use strict";

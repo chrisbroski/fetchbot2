@@ -51,8 +51,8 @@ function Viewer(senses, actions, config) {
 
             io.emit('actions', JSON.stringify(actions.dispatch()));
             io.emit('behaviors', JSON.stringify(global.behaviorTable));
-            io.emit('getSenseParams', JSON.stringify(global.params.senses));
-            io.emit('getActionParams', JSON.stringify(global.params.actions));
+            io.emit('getSenseParams', JSON.stringify(global.tunable.senses));
+            io.emit('getActionParams', JSON.stringify(global.tunable.actions));
             sendSenseData();
 
             socket.on("action", function (actionData) {
@@ -71,13 +71,13 @@ function Viewer(senses, actions, config) {
 
             socket.on('setsenseParam', function (senseParams) {
                 var arrayParams = senseParams.split(",");
-                global.params.senses[arrayParams[0]][arrayParams[1]] = +arrayParams[2];
+                global.tunable.senses[arrayParams[0]][arrayParams[1]] = +arrayParams[2];
                 senses.perceive();
             });
 
             socket.on('setactionParam', function (actionParams) {
                 var arrayParams = actionParams.split(",");
-                global.params.actions[arrayParams[0]][arrayParams[1]] = +arrayParams[2];
+                global.tunable.actions[arrayParams[0]][arrayParams[1]] = +arrayParams[2];
             });
 
             socket.on('disconnect', function () {
