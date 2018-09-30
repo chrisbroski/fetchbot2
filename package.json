@@ -13,7 +13,7 @@
   "scripts": {
     "start": "sudo /home/pi/n/bin/node brain/brain.js",
     "game": "node brain/brain.js --game",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "finddot": "node brain/brain.js --game find-dot-128",
     "gpio": "sudo /home/pi/n/bin/node misc/gpio-tool.js"
   },
   "repository": {
