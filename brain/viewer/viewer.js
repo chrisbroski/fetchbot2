@@ -269,7 +269,8 @@ function manualAction() {
         actName = this.getAttribute("data-action");
     }
 
-    socket.emit("action", JSON.stringify([actLib, actType, actName, paramData]));
+    // socket.emit("action", JSON.stringify([actLib, actType, actName, paramData]));
+    socket.send(JSON.stringify({"type": "action", "data": [actLib, actType, actName, paramData]}));
 }
 
 function actionParamFragment(act, params) {
@@ -520,11 +521,11 @@ function manual() {
 
     if (control === 'auto') {
         controlButton.innerHTML = 'Requesting manual control...';
-        socket.emit('control', 'manual');
+        socket.send(JSON.stringify({"type": "control", "data": "manual"}));
         setControl('manual');
     } else {
         controlButton.innerHTML = 'Requesting autonomous control...';
-        socket.emit('control', 'auto');
+        socket.send(JSON.stringify({"type": "control", "data": "auto"}));
         setControl('auto');
     }
 }
@@ -553,7 +554,7 @@ function displayParams(params, paramType) {
                 input.setAttribute("step", "0.01");
             }
             input.onchange = function () {
-                socket.emit("set" + paramType + "Param", perceiver + "," + param + "," + this.value);
+                socket.send(JSON.stringify({"type": "set" + paramType + "Param", "data": [perceiver, param, this.value]}));
             };
 
             button.type = "button";
@@ -683,7 +684,7 @@ function init() {
         }
     };*/
 
-    var socket = new WebSocket("ws://" + location.host);
+    socket = new WebSocket("ws://" + location.host);
 
     // Create canvas visualisation layers
     var vizualizer = document.getElementById('vizualize');
@@ -715,20 +716,23 @@ function init() {
         console.log(e);
     };
 
+    socket.onclose = function(e) {
+        console.log(e);
+    };
+
     socket.onmessage = function(e) {
         var dataObj;
 
         if (typeof e.data === "object") {
             dataObj = new FileReader();
             dataObj.onload = function(data) {
-                console.log(JSON.parse(this.result).data);
                 paintRaw("luma", JSON.parse(this.result).data);
             };
             dataObj.readAsText(e.data);
         } else {
             dataObj = JSON.parse(e.data);
             if (dataObj.type === "actions") {
-                actionData = dataObj.data
+                actionData = dataObj.data;
                 displayActions();
             }
             if (dataObj.type === "behaviors") {

@@ -28,24 +28,6 @@ function Viewer(senses, actions, config) {
         }
     }
 
-    function sendSenseData() {
-        setInterval(function () {
-            // var stateString = JSON.stringify(senses.senseState());
-            frameCount += 1;
-
-            // if changed, send sense data to viewer 10x per second
-            // This needs to accomodate viewer refresh
-            // if (stateString !== prevStateString) {
-            // prevStateString = stateString;
-            // io.emit('senseState', stateString);
-            // connection.sendUTF(JSON.stringify({"type": "stateString", "data": senses.senseState()}));
-            if (frameCount % 10 === 1) {
-                // io.emit('senseRaw', senses.senseRaw());
-            }
-            // }
-        }, 100);
-    }
-
     server.listen(port, function () {
         console.log('Broadcasting to fetchbot viewer at http://0.0.0.0/:' + port);
     });
@@ -55,28 +37,64 @@ function Viewer(senses, actions, config) {
         autoAcceptConnections: false
     });
 
-    socketServer.on('connect', function(connection) {
-        console.log('Fetchbot viewer client connected');
-    });
-
-    socketServer.on('request', function (request) {
-        var connection = request.accept("", request.origin);
-
-        connection.sendUTF(JSON.stringify({"type": "actions", "data": actions.dispatch()}));
-        connection.sendUTF(JSON.stringify({"type": "behaviors", "data": global.behaviorTable}));
-        connection.sendUTF(JSON.stringify({"type": "getSenseParams", "data": global.tunable.senses}));
-        connection.sendUTF(JSON.stringify({"type": "getActionParams", "data": global.tunable.actions}));
-        connection.sendUTF(JSON.stringify({"type": "stateString", "data": senses.senseState()}));
-        connection.sendBytes(Buffer.from(senses.senseRaw()));
-
-        connection.on('message', function(msg) {
-            console.log("Received Message: " + msg.utf8Data);
+    function init() {
+        socketServer.on('connect', function(connection) {
+            console.log('Fetchbot viewer client connected');
         });
 
-        connection.on('close', function() {
-            console.log("Disconnected.");
+        socketServer.on('request', function (request) {
+            var connection = request.accept("", request.origin);
+
+            function sendJson(type, data) {
+                connection.sendUTF(JSON.stringify({"type": type, "data": data}));
+            }
+
+            function sendSenseData() {
+                setInterval(function () {
+                    frameCount += 1;
+                    sendJson("stateString", senses.senseState());
+                    if (frameCount % 10 === 1) {
+                        connection.sendBytes(Buffer.from(senses.senseRaw()));
+                    }
+                }, 100);
+            }
+
+            sendJson("actions", actions.dispatch());
+            sendJson("behaviors", global.behaviorTable);
+            sendJson("getSenseParams", global.tunable.senses);
+            sendJson("getActionParams", global.tunable.actions);
+            sendSenseData();
+
+            connection.on("message", function (msg) {
+                var jsonMsg = JSON.parse(msg.utf8Data);
+                if (jsonMsg.type === "action") {
+                    actions.dispatch(jsonMsg.data[0], jsonMsg.data[1], jsonMsg.data[2], jsonMsg.data[3]);
+                }
+                if (jsonMsg.type === "control") {
+                    global.config.manual = (jsonMsg.data === 'manual');
+                    console.log("Manual control: ", global.config.manual);
+                }
+                if (jsonMsg.type === "setsenseParam") {
+                    global.tunable.senses[jsonMsg.data[0]][jsonMsg.data[1]] = +jsonMsg.data[2];
+                    senses.perceive();
+                }
+                if (jsonMsg.type === "setactionParam") {
+                    global.tunable.actions[jsonMsg.data[0]][jsonMsg.data[1]] = +jsonMsg.data[2];
+                    senses.perceive();
+                }
+            });
+
+            /*socket.on('btable', function (btable) {
+                behaviors.updateBTable(JSON.parse(btable));
+            });*/
+
+            connection.on('close', function() {
+                console.log("Disconnected.");
+            });
         });
-    });
+    }
+
+    this.start = init;
 }
 
 module.exports = Viewer;
