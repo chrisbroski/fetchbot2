@@ -147,9 +147,8 @@ function createRule(w, h) {
     document.getElementById("y-rule-4").textContent = h.toFixed();
 }
 
-function senseStateReceived(senseState) {
-    var jsonState = JSON.parse(senseState),
-        jsonString;
+function senseStateReceived(jsonState) {
+    var jsonString;
 
     if (!detectors) {
         detectors = true;
@@ -404,8 +403,7 @@ function displayAction(action) {
     actionSection.appendChild(actionArea);
 }
 
-function displayActions(actions) {
-    actionData = JSON.parse(actions);
+function displayActions() {
     Object.keys(actionData).forEach(function (a) {
         displayAction(a);
         displayActionSelect(a);
@@ -488,7 +486,7 @@ function displayBehaviors(behaviorTable) {
         option;
 
     if (behaviorTable) {
-        behaviors = JSON.parse(behaviorTable).chasing;
+        behaviors = behaviorTable.chasing;
     } else {
         behaviors = [];
     }
@@ -535,7 +533,7 @@ function displayParams(params, paramType) {
     var paramDiv = document.getElementById(paramType + "Params"),
         fieldset = document.createElement("fieldset");
 
-    params = JSON.parse(params);
+    // params = JSON.parse(params);
 
     Object.keys(params).forEach(function (perceiver) {
         var h4 = document.createElement("h4");
@@ -685,7 +683,8 @@ function init() {
         }
     };*/
 
-    socket = io({reconnection: false});
+    // socket = io({reconnection: false});
+    var socket = new WebSocket("ws://" + location.host);
 
     // Create canvas visualisation layers
     var vizualizer = document.getElementById('vizualize');
@@ -713,7 +712,51 @@ function init() {
     });
     checkLayers();
 
-    socket.on("senseState", senseStateReceived);
+    socket.onopen = function(e) {
+        console.log(e);
+    };
+
+    socket.onmessage = function(e) {
+        var dataObj;
+        /*var p = document.createElement("p");
+        p.textContent = e.data;
+        document.querySelector("#chatbox").appendChild(p);*/
+        console.log(e);
+        if (typeof e.data === "object") {
+            dataObj = new FileReader();
+            dataObj.onload = function(data) {
+                console.log(JSON.parse(this.result).data);
+                // displayRaw(dataObj.result);
+                paintRaw("luma", JSON.parse(this.result).data);
+                // console.log(JSON.parse(dataObj.result).data);
+            };
+            dataObj.readAsText(e.data);
+        } else {
+            dataObj = JSON.parse(e.data);
+            if (dataObj.type === "actions") {
+                actionData = dataObj.data
+                displayActions();
+            }
+            if (dataObj.type === "behaviors") {
+                displayBehaviors(dataObj.data);
+            }
+            if (dataObj.type === "getSenseParams") {
+                displayParams(dataObj.data, "sense");
+            }
+            if (dataObj.type === "getActionParams") {
+                displayParams(dataObj.data, "action");
+            }
+            if (dataObj.type === "stateString") {
+                senseStateReceived(dataObj.data);
+            }
+            if (dataObj.type === "raw") {
+                paintRaw("luma", JSON.parse(dataObj.data));
+            }
+        }
+        // console.log(typeof e.data);
+    };
+
+    /*socket.on("senseState", senseStateReceived);
     socket.on("senseRaw", displayRaw);
     socket.on("actions", displayActions);
     socket.on("behaviors", displayBehaviors);
@@ -725,7 +768,7 @@ function init() {
     });
     socket.on("disconnect", function () {
         window.console.log('disconnected');
-    });
+    });*/
 }
 
 init();

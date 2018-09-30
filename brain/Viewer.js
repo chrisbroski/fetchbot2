@@ -38,9 +38,10 @@ function Viewer(senses, actions, config) {
             // This needs to accomodate viewer refresh
             // if (stateString !== prevStateString) {
             // prevStateString = stateString;
-            io.emit('senseState', stateString);
+            // io.emit('senseState', stateString);
+            // connection.sendUTF(JSON.stringify({"type": "stateString", "data": senses.senseState()}));
             if (frameCount % 10 === 1) {
-                io.emit('senseRaw', senses.senseRaw());
+                // io.emit('senseRaw', senses.senseRaw());
             }
             // }
         }, 100);
@@ -85,7 +86,7 @@ function Viewer(senses, actions, config) {
                 console.log('Fetchbot viewer client disconnected');
             });
         });*/
-        socketServer.on('request', function(req) {
+        /*socketServer.on('request', function(req) {
             var conn = req.accept("", req.origin);
             conn.sendUTF("powerOn");
 
@@ -93,7 +94,7 @@ function Viewer(senses, actions, config) {
                 console.log("Received Message: " + msg.utf8Data);
                 toggleOutputPin(msg.utf8Data);
             });
-        });
+        });*/
     }
 
     server.listen(port, function () {
@@ -107,6 +108,26 @@ function Viewer(senses, actions, config) {
 
     socketServer.on('connect', function(connection) {
         console.log('Fetchbot viewer client connected');
+    });
+
+    socketServer.on('request', function (request) {
+        var connection = request.accept("", request.origin);
+
+        connection.sendUTF(JSON.stringify({"type": "actions", "data": actions.dispatch()}));
+        connection.sendUTF(JSON.stringify({"type": "behaviors", "data": global.behaviorTable}));
+        connection.sendUTF(JSON.stringify({"type": "getSenseParams", "data": global.tunable.senses}));
+        connection.sendUTF(JSON.stringify({"type": "getActionParams", "data": global.tunable.actions}));
+        connection.sendUTF(JSON.stringify({"type": "stateString", "data": senses.senseState()}));
+        // connection.sendBytes(Buffer.from(senses.senseRaw()));
+        connection.sendUTF(JSON.stringify({"type": "raw", "data": senses.senseRaw()}));
+
+        connection.on('message', function(msg) {
+            console.log("Received Message: " + msg.utf8Data);
+        });
+
+        connection.on('close', function() {
+            console.log("Disconnected.");
+        });
     });
 
     this.start = init;
