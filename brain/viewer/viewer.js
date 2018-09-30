@@ -147,9 +147,8 @@ function createRule(w, h) {
     document.getElementById("y-rule-4").textContent = h.toFixed();
 }
 
-function senseStateReceived(senseState) {
-    var jsonState = JSON.parse(senseState),
-        jsonString;
+function senseStateReceived(jsonState) {
+    var jsonString;
 
     if (!detectors) {
         detectors = true;
@@ -270,7 +269,8 @@ function manualAction() {
         actName = this.getAttribute("data-action");
     }
 
-    socket.emit("action", JSON.stringify([actLib, actType, actName, paramData]));
+    // socket.emit("action", JSON.stringify([actLib, actType, actName, paramData]));
+    socket.send(JSON.stringify({"type": "action", "data": [actLib, actType, actName, paramData]}));
 }
 
 function actionParamFragment(act, params) {
@@ -404,8 +404,7 @@ function displayAction(action) {
     actionSection.appendChild(actionArea);
 }
 
-function displayActions(actions) {
-    actionData = JSON.parse(actions);
+function displayActions() {
     Object.keys(actionData).forEach(function (a) {
         displayAction(a);
         displayActionSelect(a);
@@ -488,7 +487,7 @@ function displayBehaviors(behaviorTable) {
         option;
 
     if (behaviorTable) {
-        behaviors = JSON.parse(behaviorTable).chasing;
+        behaviors = behaviorTable.chasing;
     } else {
         behaviors = [];
     }
@@ -522,11 +521,11 @@ function manual() {
 
     if (control === 'auto') {
         controlButton.innerHTML = 'Requesting manual control...';
-        socket.emit('control', 'manual');
+        socket.send(JSON.stringify({"type": "control", "data": "manual"}));
         setControl('manual');
     } else {
         controlButton.innerHTML = 'Requesting autonomous control...';
-        socket.emit('control', 'auto');
+        socket.send(JSON.stringify({"type": "control", "data": "auto"}));
         setControl('auto');
     }
 }
@@ -534,8 +533,6 @@ function manual() {
 function displayParams(params, paramType) {
     var paramDiv = document.getElementById(paramType + "Params"),
         fieldset = document.createElement("fieldset");
-
-    params = JSON.parse(params);
 
     Object.keys(params).forEach(function (perceiver) {
         var h4 = document.createElement("h4");
@@ -555,7 +552,7 @@ function displayParams(params, paramType) {
                 input.setAttribute("step", "0.01");
             }
             input.onchange = function () {
-                socket.emit("set" + paramType + "Param", perceiver + "," + param + "," + this.value);
+                socket.send(JSON.stringify({"type": "set" + paramType + "Param", "data": [perceiver, param, this.value]}));
             };
 
             button.type = "button";
@@ -685,7 +682,7 @@ function init() {
         }
     };*/
 
-    socket = io({reconnection: false});
+    socket = new WebSocket("ws://" + location.host);
 
     // Create canvas visualisation layers
     var vizualizer = document.getElementById('vizualize');
@@ -713,19 +710,43 @@ function init() {
     });
     checkLayers();
 
-    socket.on("senseState", senseStateReceived);
-    socket.on("senseRaw", displayRaw);
-    socket.on("actions", displayActions);
-    socket.on("behaviors", displayBehaviors);
-    socket.on("getSenseParams", function (p) {
-        displayParams(p, "sense");
-    });
-    socket.on("getActionParams", function (p) {
-        displayParams(p, "action");
-    });
-    socket.on("disconnect", function () {
+    socket.onopen = function(e) {
+        window.console.log('connected');
+    };
+
+    socket.onclose = function(e) {
         window.console.log('disconnected');
-    });
+    };
+
+    socket.onmessage = function(e) {
+        var dataObj;
+
+        if (typeof e.data === "object") {
+            dataObj = new FileReader();
+            dataObj.onload = function(data) {
+                paintRaw("luma", JSON.parse(this.result).data);
+            };
+            dataObj.readAsText(e.data);
+        } else {
+            dataObj = JSON.parse(e.data);
+            if (dataObj.type === "actions") {
+                actionData = dataObj.data;
+                displayActions();
+            }
+            if (dataObj.type === "behaviors") {
+                displayBehaviors(dataObj.data);
+            }
+            if (dataObj.type === "getSenseParams") {
+                displayParams(dataObj.data, "sense");
+            }
+            if (dataObj.type === "getActionParams") {
+                displayParams(dataObj.data, "action");
+            }
+            if (dataObj.type === "stateString") {
+                senseStateReceived(dataObj.data);
+            }
+        }
+    };
 }
 
 init();
