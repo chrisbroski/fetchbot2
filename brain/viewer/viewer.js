@@ -683,7 +683,6 @@ function init() {
         }
     };*/
 
-    // socket = io({reconnection: false});
     var socket = new WebSocket("ws://" + location.host);
 
     // Create canvas visualisation layers
@@ -718,17 +717,12 @@ function init() {
 
     socket.onmessage = function(e) {
         var dataObj;
-        /*var p = document.createElement("p");
-        p.textContent = e.data;
-        document.querySelector("#chatbox").appendChild(p);*/
-        console.log(e);
+
         if (typeof e.data === "object") {
             dataObj = new FileReader();
             dataObj.onload = function(data) {
                 console.log(JSON.parse(this.result).data);
-                // displayRaw(dataObj.result);
                 paintRaw("luma", JSON.parse(this.result).data);
-                // console.log(JSON.parse(dataObj.result).data);
             };
             dataObj.readAsText(e.data);
         } else {
@@ -749,23 +743,10 @@ function init() {
             if (dataObj.type === "stateString") {
                 senseStateReceived(dataObj.data);
             }
-            if (dataObj.type === "raw") {
-                paintRaw("luma", JSON.parse(dataObj.data));
-            }
         }
-        // console.log(typeof e.data);
     };
 
-    /*socket.on("senseState", senseStateReceived);
-    socket.on("senseRaw", displayRaw);
-    socket.on("actions", displayActions);
-    socket.on("behaviors", displayBehaviors);
-    socket.on("getSenseParams", function (p) {
-        displayParams(p, "sense");
-    });
-    socket.on("getActionParams", function (p) {
-        displayParams(p, "action");
-    });
+    /*
     socket.on("disconnect", function () {
         window.console.log('disconnected');
     });*/

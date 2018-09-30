@@ -56,7 +56,7 @@ function Senses(visionWidth, visionHeight, game) {
         return JSON.parse(JSON.stringify(state));
     };
 
-    function downSampleTo(data, newWidth) {
+    function downSampleToStream(data, newWidth) {
         var newData, ii, x, iX, y, iY, width, newVal, newLength;
         newData = [];
         width = Math.ceil(visionWidth / newWidth);
@@ -75,34 +75,12 @@ function Senses(visionWidth, visionHeight, game) {
             newData[ii] = Math.floor(newVal / (width * width));
         }
 
-        return newData;
-    }
-
-    function downSampleToStream(data, newWidth) {
-        var newData, ii, x, iX, y, iY, width, newVal, newLength;
-        newData = [];
-        width = Math.ceil(visionWidth / newWidth);
-        newLength = newWidth * newWidth * 3 / 4;
-
-        for (ii = 0; ii < newLength; ii += 1) {
-            x = ii % newWidth * width;
-            y = Math.floor(ii / newWidth) * width;
-
-            newVal = 0;
-            for (iY = y; iY < width + y; iY += 1) {
-                for (iX = x; iX < width + x; iX += 1) {
-                    newVal += data[iY * visionWidth + iX];
-                }
-            }
-            newData[ii] = String.fromCharCode(Math.floor(newVal / (width * width)));
-        }
-
-        return Buffer.from(newData.join());
+        return Buffer.from(newData);
     }
 
     this.senseRaw = function () {
         // return JSON.stringify({"luma": raw.luma.current, "chromaU": raw.chroma.U, "chromaV": raw.chroma.V});
-        return JSON.stringify(downSampleTo(raw.luma.current, 64));
+        return JSON.stringify(downSampleToStream(raw.luma.current, 64));
     };
 
     // *current action* can be modified by the Actions module

@@ -6,7 +6,6 @@ function Viewer(senses, actions, config) {
     var fs = require('fs'),
         http = require('http'),
         server = http.createServer(app),
-        //io = require('socket.io')(server),
         WebSocketServer = require('websocket').server,
         port = 3791,
         frameCount = 0,
@@ -31,7 +30,7 @@ function Viewer(senses, actions, config) {
 
     function sendSenseData() {
         setInterval(function () {
-            var stateString = JSON.stringify(senses.senseState());
+            // var stateString = JSON.stringify(senses.senseState());
             frameCount += 1;
 
             // if changed, send sense data to viewer 10x per second
@@ -45,56 +44,6 @@ function Viewer(senses, actions, config) {
             }
             // }
         }, 100);
-    }
-
-    function init() {
-        /*io.on('connection', function (socket) {
-            console.log('Fetchbot viewer client connected');
-
-            io.emit('actions', JSON.stringify(actions.dispatch()));
-            io.emit('behaviors', JSON.stringify(global.behaviorTable));
-            io.emit('getSenseParams', JSON.stringify(global.tunable.senses));
-            io.emit('getActionParams', JSON.stringify(global.tunable.actions));
-            sendSenseData();
-
-            socket.on("action", function (actionData) {
-                var actionArray = JSON.parse(actionData);
-                actions.dispatch(actionArray[0], actionArray[1], actionArray[2], actionArray[3]);
-            });
-
-            socket.on('control', function (controlType) {
-                global.config.manual = (controlType === 'manual');
-                console.log("Manual control: ", global.config.manual);
-            });
-
-            // socket.on('btable', function (btable) {
-            //     behaviors.updateBTable(JSON.parse(btable));
-            // });
-
-            socket.on('setsenseParam', function (senseParams) {
-                var arrayParams = senseParams.split(",");
-                global.tunable.senses[arrayParams[0]][arrayParams[1]] = +arrayParams[2];
-                senses.perceive();
-            });
-
-            socket.on('setactionParam', function (actionParams) {
-                var arrayParams = actionParams.split(",");
-                global.tunable.actions[arrayParams[0]][arrayParams[1]] = +arrayParams[2];
-            });
-
-            socket.on('disconnect', function () {
-                console.log('Fetchbot viewer client disconnected');
-            });
-        });*/
-        /*socketServer.on('request', function(req) {
-            var conn = req.accept("", req.origin);
-            conn.sendUTF("powerOn");
-
-            conn.on('message', function(msg) {
-                console.log("Received Message: " + msg.utf8Data);
-                toggleOutputPin(msg.utf8Data);
-            });
-        });*/
     }
 
     server.listen(port, function () {
@@ -118,8 +67,7 @@ function Viewer(senses, actions, config) {
         connection.sendUTF(JSON.stringify({"type": "getSenseParams", "data": global.tunable.senses}));
         connection.sendUTF(JSON.stringify({"type": "getActionParams", "data": global.tunable.actions}));
         connection.sendUTF(JSON.stringify({"type": "stateString", "data": senses.senseState()}));
-        // connection.sendBytes(Buffer.from(senses.senseRaw()));
-        connection.sendUTF(JSON.stringify({"type": "raw", "data": senses.senseRaw()}));
+        connection.sendBytes(Buffer.from(senses.senseRaw()));
 
         connection.on('message', function(msg) {
             console.log("Received Message: " + msg.utf8Data);
@@ -129,8 +77,6 @@ function Viewer(senses, actions, config) {
             console.log("Disconnected.");
         });
     });
-
-    this.start = init;
 }
 
 module.exports = Viewer;
