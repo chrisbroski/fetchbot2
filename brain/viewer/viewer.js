@@ -534,8 +534,6 @@ function displayParams(params, paramType) {
     var paramDiv = document.getElementById(paramType + "Params"),
         fieldset = document.createElement("fieldset");
 
-    // params = JSON.parse(params);
-
     Object.keys(params).forEach(function (perceiver) {
         var h4 = document.createElement("h4");
         h4.textContent = perceiver;
@@ -713,11 +711,11 @@ function init() {
     checkLayers();
 
     socket.onopen = function(e) {
-        console.log(e);
+        window.console.log('connected');
     };
 
     socket.onclose = function(e) {
-        console.log(e);
+        window.console.log('disconnected');
     };
 
     socket.onmessage = function(e) {
@@ -749,11 +747,6 @@ function init() {
             }
         }
     };
-
-    /*
-    socket.on("disconnect", function () {
-        window.console.log('disconnected');
-    });*/
 }
 
 init();
