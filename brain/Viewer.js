@@ -29,7 +29,7 @@ function Viewer(senses, actions, config) {
     }
 
     server.listen(port, function () {
-        console.log('Broadcasting to fetchbot viewer at http://0.0.0.0/:' + port);
+        console.log('Broadcasting to fetchbot viewer at http://0.0.0.0:' + port);
     });
 
     var socketServer = new WebSocketServer({
