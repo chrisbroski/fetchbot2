@@ -3,8 +3,8 @@
 global.tunable.senses.brightRed = {};
 // global.tunable.senses.brightRed.luma = 100;
 // global.tunable.senses.brightRed.chromaV = 190;
-global.tunable.senses.brightRed.luma = 130;
-global.tunable.senses.brightRed.chromaV = 160;
+global.tunable.senses.brightRed.luma = 135;
+global.tunable.senses.brightRed.chromaV = 185;
 global.tunable.senses.edge = {};
 global.tunable.senses.edge.diff = 50;
 global.tunable.senses.center = {};
