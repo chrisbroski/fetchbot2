@@ -63,9 +63,9 @@ label {
     overflow: auto;
 }
 #vizualize {
-    margin: 0 10px 10px 14px;
+    margin: 0 0 10px 14px;
     position: relative;
-    overflow; auto;
+    overflow: auto;
     width: 384px; height: 288px;
     float: left;
     background: #fff;
