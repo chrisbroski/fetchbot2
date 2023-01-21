@@ -1,5 +1,3 @@
-/*jslint node: true */
-
 function Led(senses, game) {
     "use strict";
 

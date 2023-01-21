@@ -1,5 +1,3 @@
-/*jslint node: true, sloppy: true, bitwise: true, nomen: true */
-
 var Gpio = require('pigpio').Gpio,
     fs = require('fs'),
     http = require('http'),
@@ -47,7 +45,7 @@ server.listen(port, function () {
     console.log('Connected to GPIO tool at http://0.0.0.0:' + port);
 });
 
-socketServer.on('connect', function(connection) {
+socketServer.on('connect', function() {
     console.log('GPIO tool client connected');
 });
 

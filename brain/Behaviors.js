@@ -1,8 +1,6 @@
-/*jslint node: true, bitwise: true */
-
 var behaviorTable = require("./behavior/behaviorTable.json");
 
-function Behaviors(senses, actions, config) {
+function Behaviors(senses, actions) {
     'use strict';
 
     function detectorMatch(situation, detector) {

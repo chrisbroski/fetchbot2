@@ -1,5 +1,3 @@
-/*jshint esversion: 6 */
-
 /*
 Brain.js loads and initializes Senses, Actions, and Behaviors modules.
 It also connects to a viewer for perception visualization and manual action control.

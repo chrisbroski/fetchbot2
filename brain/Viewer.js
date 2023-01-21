@@ -1,6 +1,4 @@
-/*jslint node: true */
-
-function Viewer(senses, actions, config) {
+function Viewer(senses, actions) {
     'use strict';
 
     var fs = require('fs'),
@@ -8,9 +6,7 @@ function Viewer(senses, actions, config) {
         server = http.createServer(app),
         WebSocketServer = require('websocket').server,
         port = 3791,
-        frameCount = 0,
-        prevStateString = "",
-        manual = false;
+        frameCount = 0;
 
     function app(req, rsp) {
         if (req.url === "/img/favicon.png") {
@@ -38,7 +34,7 @@ function Viewer(senses, actions, config) {
     });
 
     function init() {
-        socketServer.on('connect', function(connection) {
+        socketServer.on('connect', function() {
             console.log('Fetchbot viewer client connected');
         });
 

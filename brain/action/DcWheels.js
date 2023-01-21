@@ -1,5 +1,3 @@
-/*jslint node: true */
-
 global.tunable.actions = {};
 global.tunable.actions.search = {};
 global.tunable.actions.search.maxDuration = 2000;

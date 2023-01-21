@@ -145,7 +145,7 @@ function Fetchbot() {
         return blobs;
     };
 
-    // Find shapes and convextity
+    // Find shapes and convexity
     // https://www.tutorialspoint.com/checking-for-convex-polygon-in-javascript
     // https://en.wikipedia.org/wiki/Delaunay_triangulation
 }

@@ -1,5 +1,3 @@
-/*jslint node: true */
-
 // Set global params: global.tunable[module name][param name]
 global.tunable.reddot = {};
 global.tunable.reddot.findRed = {};

@@ -1,5 +1,3 @@
-/*jslint node: true */
-
 /*
 For "bug" shape detection https://www.npmjs.com/package/alpha-shape
 */

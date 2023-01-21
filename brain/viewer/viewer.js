@@ -1,5 +1,4 @@
-/*jslint browser: true, sloppy: true */
-/*global io */
+/*jshint unused: false, browser: true */
 
 var socket, control = 'auto', detectors, actionData, mood, /*editingBehavior,*/ viz = {};
 
@@ -628,7 +627,7 @@ function createBehaviorData() {
 
         radios.forEach(function (r) {
             if (r.checked && r.value !== "") {
-                situation[detector] = !!+r.value;
+                situation[detector] = !!parseInt(r.value, 10);
             }
         });
     });
@@ -710,11 +709,11 @@ function init() {
     });
     checkLayers();
 
-    socket.onopen = function(e) {
+    socket.onopen = function() {
         window.console.log('connected');
     };
 
-    socket.onclose = function(e) {
+    socket.onclose = function() {
         window.console.log('disconnected');
     };
 

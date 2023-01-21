@@ -1,7 +1,3 @@
-/*jshint esversion: 6 */
-/*jshint strict: true */
-/*jslint unused: true */
-
 function Game() {
     'use strict';
 

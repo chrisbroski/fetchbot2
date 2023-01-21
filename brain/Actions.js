@@ -1,5 +1,3 @@
-/*jslint node: true */
-
 function Actions(senses, game) {
     'use strict';
 

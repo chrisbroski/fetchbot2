@@ -1,5 +1,3 @@
-/*jslint node: true */
-
 function Mood(senses) {
     "use strict";
 

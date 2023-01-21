@@ -1,5 +1,3 @@
-/*jslint node: true */
-
 global.tunable.senses.since = {};
 global.tunable.senses.since.red = 300;
 
