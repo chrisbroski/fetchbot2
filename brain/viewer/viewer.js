@@ -8,11 +8,13 @@ viz.canvasHeight = 288;
 
 viz.layers = {};
 viz.layers.luma = {type: "raw"};
-viz.layers.luma.color = function (val) {
-    return "rgba(" + val + ", " + val + ", " + val + ", 0.5)";
-};
+viz.layers.generalIllumination = {color: [0, 0, 0, 1.0], downsample: 48, type: "cover"};
 viz.layers.edges = {color: [0, 0, 0, 0.8]};
 viz.layers.brightRed = {color: [255, 0, 0, 0.5], downsample: 2};
+
+function valToColor(val) {
+    return "rgba(" + val + ", " + val + ", " + val + ", 0.9)";
+}
 
 function disableControlButtons(disOrEnable) {
     var buttons = document.querySelectorAll('#controls button, #actions button'), ii, len;
@@ -50,16 +52,18 @@ function describeAction(action) {
     });
 }
 
-function paintRaw(v, dots) {
+function paintRaw(v, dots, downsample) {
+    downsample = downsample || 2;
+    var magWidth = 128 / downsample;
     var ctx = viz.layers[v].ctx,
-        mag = viz.canvasWidth / 64;
+        mag = viz.canvasWidth / magWidth;
 
     ctx.clearRect(0, 0, viz.canvasWidth, viz.canvasHeight);
     dots.forEach(function (dot, index) {
-        var x = (index % 64) * mag,
-            y = (Math.floor(index / 64)) * mag;
+        var x = (index % magWidth) * mag,
+            y = (Math.floor(index / magWidth)) * mag;
 
-        ctx.fillStyle = viz.layers[v].color(dot);
+        ctx.fillStyle = valToColor(dot);
         ctx.beginPath();
         ctx.fillRect(x, y, mag, mag);
         ctx.closePath();
@@ -67,9 +71,35 @@ function paintRaw(v, dots) {
     });
 }
 
-function displayRaw(raw) {
-    raw = JSON.parse(raw);
-    paintRaw("luma", raw);
+var displayed = false;
+function paintCover(v, dots, downsample) {
+    // console.log(dots.length / viz.canvasWidth);
+    downsample = downsample || 2;
+    var magWidth = 128 / downsample;
+    var ctx = viz.layers[v].ctx,
+        mag = viz.canvasWidth / magWidth;
+
+    ctx.clearRect(0, 0, viz.canvasWidth, viz.canvasHeight);
+    dots.forEach(function (dot, index) {
+        // var x = (index % magWidth) * mag,
+        //     y = (Math.floor(index / magWidth)) * mag;
+        // var col = (ii % Math.ceil(visionWidth / size));
+        // var row = Math.floor(ii / Math.ceil(visionWidth / size));
+        var x = (index % 8) * 48;
+            // y = index % 8 * 48;
+        var y = Math.floor(index / 8) * 48;
+        if (!displayed) {
+            console.log(index, x, y);
+        }
+
+        ctx.fillStyle = valToColor(dot);
+        ctx.beginPath();
+        ctx.fillRect(x, y, 48, 48);
+        ctx.closePath();
+        ctx.fill();
+    });
+
+    displayed = true;
 }
 
 function clearDetectors() {
@@ -167,7 +197,11 @@ function senseStateReceived(jsonState) {
     // Paint visualisations
     Object.keys(viz.layers).forEach(function (v) {
         if (viz.layers[v].type !== "raw") {
-            paintViz(v, jsonState.perceptions[v]);
+            if (viz.layers[v].type === "cover") {
+                paintCover(v, jsonState.perceptions[v], );
+            } else {
+                paintViz(v, jsonState.perceptions[v]);
+            }
         }
     });
 }
@@ -723,7 +757,7 @@ function init() {
         if (typeof e.data === "object") {
             dataObj = new FileReader();
             dataObj.onload = function(data) {
-                paintRaw("luma", JSON.parse(this.result).data);
+                // paintRaw("luma", JSON.parse(this.result).data);
             };
             dataObj.readAsText(e.data);
         } else {

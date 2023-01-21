@@ -49,9 +49,9 @@ function Viewer(senses, actions) {
                 setInterval(function () {
                     frameCount += 1;
                     sendJson("stateString", senses.senseState());
-                    if (frameCount % 10 === 1) {
-                        connection.sendBytes(Buffer.from(senses.senseRaw()));
-                    }
+                    // if (frameCount % 10 === 1) {
+                    //     connection.sendBytes(Buffer.from(senses.senseRaw()));
+                    // }
                 }, 100);
             }
 
