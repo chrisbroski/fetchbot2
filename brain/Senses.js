@@ -1,5 +1,3 @@
-/*jslint node: true */
-
 function Senses(visionWidth, visionHeight, game) {
     'use strict';
 
@@ -156,6 +154,7 @@ function Senses(visionWidth, visionHeight, game) {
         state.perceptions.edges = fetchbot.searchEdges(raw.luma.current, imgPixelSize, visionWidth);
         state.perceptions.brightRed = fetchbot.searchBrightRed(raw.chroma.V, visionWidth / 2, raw.luma.current);
         state.perceptions.targetDirection = fetchbot.redColumns(visionWidth / 2);
+        state.perceptions.generalIllumination = fetchbot.generalBrightness(raw.luma.current, imgPixelSize, visionWidth);
     };
 
     // *Observers* populate raw sense state from a creature's sensors.

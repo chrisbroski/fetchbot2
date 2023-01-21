@@ -1,14 +1,12 @@
-/*jslint node: true */
-
 global.tunable.senses.brightRed = {};
-// global.tunable.senses.brightRed.luma = 100;
-// global.tunable.senses.brightRed.chromaV = 190;
 global.tunable.senses.brightRed.luma = 135;
 global.tunable.senses.brightRed.chromaV = 185;
 global.tunable.senses.edge = {};
 global.tunable.senses.edge.diff = 50;
 global.tunable.senses.center = {};
 global.tunable.senses.center.width = 0.2;
+global.tunable.senses.generalBrightness = {};
+global.tunable.senses.generalBrightness.size = 16;
 
 function Fetchbot() {
     'use strict';
@@ -111,6 +109,45 @@ function Fetchbot() {
 
         return dots;
     };
+
+    function testGB(ii, visionWidth, imgPixelSize, luma) {
+        var size = global.tunable.senses.generalBrightness.size;
+        // var cols = Math.ceil(visionWidth / size);
+        // var rows = Math.ceil(imgPixelSize / visionWidth / size);
+        var col = (ii % Math.ceil(visionWidth / size));
+        var row = Math.floor(ii / Math.ceil(visionWidth / size));
+
+        var x = (row * size * visionWidth) + (col * size);
+        var sum = 0;
+        var jj;
+        var kk;
+        // var vals = [];
+        for (jj = 0; jj < size; jj += 1) {
+            for (kk = 0; kk < size; kk += 1) {
+                sum += luma[(jj * visionWidth) + x + kk];
+                // vals.push(luma[(jj * visionWidth) + x + kk]);
+            }
+        }
+
+        return sum / (size * size);
+    }
+
+    this.generalBrightness = function generalBrightness(luma, len, visionWidth) {
+        var ii;
+        var blobs = [];
+        const cols = Math.ceil(visionWidth / global.tunable.senses.generalBrightness.size);
+        const rows = Math.ceil(len / visionWidth / global.tunable.senses.generalBrightness.size);
+        const blocks = cols * rows;
+
+        for (ii = 0; ii < blocks; ii += 1) {
+            blobs.push(testGB(ii, visionWidth, len, luma));
+        }
+        return blobs;
+    };
+
+    // Find shapes and convextity
+    // https://www.tutorialspoint.com/checking-for-convex-polygon-in-javascript
+    // https://en.wikipedia.org/wiki/Delaunay_triangulation
 }
 
 module.exports = Fetchbot;
